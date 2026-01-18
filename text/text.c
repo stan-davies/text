@@ -50,12 +50,12 @@ static void dest_str(
         s->beg = NULL;
 }
 
-static void resize_str(
+static int resize_str(
         struct str             *s       ,
         int                     r
 ) {
         if (s->len + r < 0) {           // IMPOSSIBLE
-                return;
+                return 0;
         }
 
         s->len += r;
@@ -66,11 +66,15 @@ static void resize_str(
                         s->beg = s->end = NULL;
                 }                       // BUT WAS ALREADY EMPTY
 
-                return;
+                return 0;
         }
 
         s->beg = realloc(s->beg, s->len * sizeof(char));
-        s->end = s->beg + s->len * sizeof(char);
+        if (NULL == s->end) {
+                s->end = s->beg;
+        }
+
+        return s->len;
 }
 
 /**     Function definitions                                            **/
@@ -80,12 +84,6 @@ void init_text_man(
 ) {
         txt.fore = create_str();
         txt.aft  = create_str();
-
-        resize_str(&txt.fore, 6);
-        strcpy(txt.fore.beg, "hello");
-
-        resize_str(&txt.aft, 6);
-        strcpy(txt.aft.beg, "world");
 }
 
 void dest_text_man(
@@ -108,4 +106,19 @@ void print_txt(
                 printf("%c", *--c);
         }
         printf("'\n");
+}
+
+void append_txt(
+        char                   *s
+) {
+        if (resize_str(&txt.fore, strlen(s)) <= 0) {
+                return;
+        }
+
+        char *c = s;
+        char *new_e = txt.fore.beg + txt.fore.len;
+        while (txt.fore.end < new_e) {
+                *txt.fore.end++ = *c++;
+        }
+        *txt.fore.end = 0;
 }

@@ -7,6 +7,7 @@
 int main(void) {
         init_text_man();
 
+        append_txt("Hello world!");
         print_txt();
 
         dest_text_man();

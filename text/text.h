@@ -19,4 +19,8 @@ void print_txt(
         void
 );
 
+void append_txt(
+        char                   *s
+);
+
 #endif
