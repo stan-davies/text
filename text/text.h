@@ -19,8 +19,12 @@ void print_txt(
         void
 );
 
-void append_txt(
+int append_txt(
         char                   *s
+);
+
+int move_cursor(
+        int                     offset
 );
 
 #endif

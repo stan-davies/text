@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "util.h"
+
 /**     Structure definitions.                                         **/
 
 /*
@@ -55,7 +57,7 @@ static int resize_str(
         int                     r
 ) {
         if (s->len + r < 0) {           // IMPOSSIBLE
-                return 0;
+                return -1;
         }
 
         s->len += r;
@@ -101,6 +103,7 @@ void print_txt(
         while (c < txt.fore.end) {
                 printf("%c", *c++);
         }
+        printf("|");
         c = txt.aft.end + txt.aft.len;
         while (c > txt.aft.beg) {
                 printf("%c", *--c);
@@ -108,11 +111,11 @@ void print_txt(
         printf("'\n");
 }
 
-void append_txt(
+int append_txt(
         char                   *s
 ) {
         if (resize_str(&txt.fore, strlen(s)) <= 0) {
-                return;
+                return FALSE;
         }
 
         char *c = s;
@@ -121,4 +124,32 @@ void append_txt(
                 *txt.fore.end++ = *c++;
         }
         *txt.fore.end = 0;
+        return TRUE;
+}
+
+int move_cursor(
+        int                     offset          // Needs to be signed.
+) {
+        struct str *src = NULL;
+        struct str *dst = NULL;
+
+        if (offset < 0) {
+                src = &txt.fore;
+                dst = &txt.aft;
+        } else if (offset > 0) {
+                src = &txt.aft;
+                dst = &txt.fore;
+        }
+
+        offset = MIN(abs(offset), src->len);
+
+        if (0 == offset) {                 // Needed?
+                return TRUE;
+        }
+
+        resize_str(dst, offset);
+        while (src->end - src->beg > src->len - offset) {
+                *dst->end++ = *--src->end;
+        }
+        resize_str(src, -offset);
 }
