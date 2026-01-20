@@ -2,8 +2,7 @@ CMD = gcc
 SRC = main.c text/text.c
 OBJ = $(SRC:.c=.o)
 INC = -I .
-# FLG = `sdl2-config --cflags --libs`
-FLG = 
+FLG = `sdl-config --cflags --libs`
 OUT = txt
 
 all : ${OBJ}
