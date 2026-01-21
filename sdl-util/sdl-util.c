@@ -8,20 +8,20 @@ int init_sdl(
         SDL_Window    **win
 ) {
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS)) {
-                printf("Error initialising SDL.\n");
+                log_err("Error initialising SDL.");
                 return FALSE;
         }
 
         *win = SDL_CreateWindow("text", 800, 600, SDL_WINDOW_INPUT_FOCUS);
 
         if (!*win) {
-                printf("Error creating window.\n");
+                log_err("Error creating window.");
                 // END SDL?
                 return FALSE;
         }
 
         if (!init_font()) {
-                printf("Error initialising SDL-ttf.\n");
+                log_err("Error initialising SDL-ttf.");
                 // END SDL + DESTROY WINDOW?
                 return FALSE;
         }

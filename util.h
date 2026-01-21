@@ -4,6 +4,8 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
+#include "logw/logw.h"
+
 #define MIN(a, b)       (a < b ? a : b)
 #define MAX(a, b)       (a > b ? a : b)
 

@@ -11,6 +11,10 @@
 #include "cycl/cycl.h"
 
 int main(int argc, char **argv) {
+        init_logw();
+
+        log_msg("Initialising...");
+
         SDL_Window *win;
 
         if (!init_sdl(&win)) {
@@ -21,6 +25,8 @@ int main(int argc, char **argv) {
 
         init_txt_man();
 
+        log_msg("Program started successfully.");
+
         append_txt("world");
         move_cursor(-5);
         append_txt("hello ");
@@ -29,9 +35,13 @@ int main(int argc, char **argv) {
 
         cycle();
 
+        log_msg("Program quit, ending...");
+
         dest_txt_man();
         dest_rend();
         end_sdl(&win);
+
+        log_msg("Program ended successfully.");
 
         return 0;
 }

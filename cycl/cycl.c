@@ -29,7 +29,7 @@ void cycle(
 
                 rendcl();
                 if (!font_rend_text(txt, 50, 50)) {
-                        printf("Error printing message.\n");
+                        log_err("Error printing message.\n");
                         return;
                 }
                 push_rend();
