@@ -10,7 +10,7 @@ int init_sdl(
                 return FALSE;
         }
 
-        *win = SDL_CreateWindow("text", 800, 600, 0);
+        *win = SDL_CreateWindow("text", 800, 600, SDL_WINDOW_INPUT_FOCUS);
 
         if (!*win) {
                 printf("Error creating window.\n");

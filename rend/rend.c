@@ -22,3 +22,16 @@ void dest_rend(
         rend.r = NULL;
         rend.I = FALSE;
 }
+
+void rendcl(
+        void
+) {
+        SDL_SetRenderDrawColor(rend.r, 255, 255, 255, 255);
+        SDL_RenderClear(rend.r);
+}
+
+void push_rend(
+        void
+) {
+        SDL_RenderPresent(rend.r);
+}

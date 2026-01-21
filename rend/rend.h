@@ -11,4 +11,12 @@ void dest_rend(
         void
 );
 
+void rendcl(
+        void
+);
+
+void push_rend(
+        void
+);
+
 #endif
