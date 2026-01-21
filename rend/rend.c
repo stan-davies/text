@@ -35,3 +35,26 @@ void push_rend(
 ) {
         SDL_RenderPresent(rend.r);
 }
+
+int rend_tex(
+        SDL_Texture    *tex     ,
+        SDL_FRect       dst
+) {
+        if (!rend.I) {
+                return FALSE;
+        }
+
+        SDL_RenderTexture(rend.r, tex, NULL, &dst);
+        return TRUE;
+}
+
+int rend_srf(
+        SDL_Surface    *srf     ,
+        int             x       ,
+        int             y
+) {
+        SDL_Texture *tex = SDL_CreateTextureFromSurface(rend.r, srf);
+        SDL_FRect    dst = { x, y, srf->w, srf->h };
+
+        return rend_tex(tex, dst);
+}

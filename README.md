@@ -25,3 +25,6 @@ For insertion:
 So everytime you add or remove some text, add it to a separate buffer then
 collapse that change into the strings on some kind of 'complete' action, if not
 an escape then a timer of a few seconds from last typing keypress.
+
+I will also want to stitch together a logging system and a separate system of
+the loop.

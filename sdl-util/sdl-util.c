@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include "font/font.h"
+
 int init_sdl(
         SDL_Window    **win
 ) {
@@ -14,6 +16,13 @@ int init_sdl(
 
         if (!*win) {
                 printf("Error creating window.\n");
+                // END SDL?
+                return FALSE;
+        }
+
+        if (!init_font()) {
+                printf("Error initialising SDL-ttf.\n");
+                // END SDL + DESTROY WINDOW?
                 return FALSE;
         }
 
@@ -23,6 +32,7 @@ int init_sdl(
 void end_sdl(
         SDL_Window    **win
 ) {
+        dest_font();
         SDL_DestroyWindow(*win);
         *win = NULL;
         SDL_Quit();

@@ -19,4 +19,15 @@ void push_rend(
         void
 );
 
+int rend_tex(
+        SDL_Texture    *tex     ,
+        SDL_FRect       dst
+);
+
+int rend_srf(
+        SDL_Surface    *srf     ,
+        int             x       ,
+        int             y
+);
+
 #endif

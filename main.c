@@ -8,6 +8,7 @@
 
 #include "rend/rend.h"
 #include "text/text.h"
+#include "font/font.h"
 
 int main(int argc, char **argv) {
         SDL_Window *win;
@@ -40,8 +41,6 @@ int main(int argc, char **argv) {
         SDL_Event e;
         int run = TRUE;
         while (run) {
-                rendcl();
-
                 while (SDL_PollEvent(&e)) {
                         if (SDL_EVENT_QUIT == e.type) {
                                 run = FALSE;
@@ -52,6 +51,11 @@ int main(int argc, char **argv) {
                         }
                 }
 
+                rendcl();
+                if (!font_rend_text("hello world", 50, 50)) {
+                        printf("Error printing message.\n");
+                        run = FALSE;
+                }
                 push_rend();
         }
 
