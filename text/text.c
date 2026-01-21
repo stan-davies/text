@@ -81,14 +81,14 @@ static int resize_str(
 
 /**     Function definitions                                            **/
 
-void init_text_man(
+void init_txt_man(
         void
 ) {
         txt.fore = create_str();
         txt.aft  = create_str();
 }
 
-void dest_text_man(
+void dest_txt_man(
         void
 ) {
         dest_str(&txt.fore);
@@ -109,6 +109,22 @@ void print_txt(
                 printf("%c", *--c);
         }
         printf("'\n");
+}
+
+void sprint_txt(
+        char                  **s               // Should be unallocated.
+) {
+        *s = malloc((txt.fore.len + txt.aft.len + 1) * sizeof(char));// +1 for '\0'
+        char *e = *s;
+        char *c = txt.fore.beg;
+        while (c < txt.fore.end) {
+                *e++ = *c++;                
+        }
+        c = txt.aft.end + txt.aft.len;
+        while (c > txt.aft.beg) {
+                *e++ = *--c;
+        }
+        *e = '\0';
 }
 
 int append_txt(
@@ -152,4 +168,6 @@ int move_cursor(
                 *dst->end++ = *--src->end;
         }
         resize_str(src, -offset);
+
+        return TRUE;
 }

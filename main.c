@@ -19,24 +19,16 @@ int main(int argc, char **argv) {
 
         init_rend(win);
 
-        init_text_man();
+        init_txt_man();
 
         append_txt("world");
-        print_txt();
-
         move_cursor(-5);
-        print_txt();
-        
         append_txt("hello ");
-        print_txt();
-
         move_cursor(11);
-        print_txt();
-
         append_txt("!");
-        print_txt();
 
-        dest_text_man();
+        char *txt;
+        sprint_txt(&txt);
 
         SDL_Event e;
         int run = TRUE;
@@ -52,13 +44,17 @@ int main(int argc, char **argv) {
                 }
 
                 rendcl();
-                if (!font_rend_text("hello world", 50, 50)) {
+                if (!font_rend_text(txt, 50, 50)) {
                         printf("Error printing message.\n");
                         run = FALSE;
                 }
                 push_rend();
         }
 
+        free(txt);
+        txt = NULL;
+
+        dest_txt_man();
         dest_rend();
         end_sdl(&win);
 

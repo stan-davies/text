@@ -4,19 +4,23 @@
 /*
  * Initialise text manager.
  */
-void init_text_man(
+void init_txt_man(
         void
 );
 
 /*
  * Destroy text manager.
  */
-void dest_text_man(
+void dest_txt_man(
         void
 );
 
 void print_txt(
         void
+);
+
+void sprint_txt(
+        char                  **s               // Should be unallocated.
 );
 
 int append_txt(
