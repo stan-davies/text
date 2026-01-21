@@ -1,5 +1,5 @@
 CMD = gcc
-SRC = main.c text/text.c sdl-util/sdl-util.c
+SRC = main.c text/text.c sdl-util/sdl-util.c rend/rend.c
 OBJ = $(SRC:.c=.o)
 INC = -I .
 FLG = `pkg-config --cflags --libs sdl3`

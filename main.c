@@ -6,6 +6,7 @@
 
 #include "sdl-util/sdl-util.h"
 
+#include "rend/rend.h"
 #include "text/text.h"
 
 int main(int argc, char **argv) {
@@ -14,6 +15,8 @@ int main(int argc, char **argv) {
         if (!init_sdl(&win)) {
                 return 0;
         }
+
+        init_rend(win);
 
         init_text_man();
 
@@ -33,6 +36,8 @@ int main(int argc, char **argv) {
         print_txt();
 
         dest_text_man();
+
+        dest_rend();
         end_sdl(&win);
 
         return 0;
