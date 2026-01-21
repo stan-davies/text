@@ -42,7 +42,7 @@ int font_rend_text(
         float           y
 ) {
         const SDL_Color black = { 0, 0, 0, 255 };
-        SDL_Surface *srf = TTF_RenderText_Solid(font.f, txt, 0, black);
+        SDL_Surface *srf = TTF_RenderText_Blended(font.f, txt, 0, black);
         int ret = rend_srf(srf, x, y);
         SDL_DestroySurface(srf);
         srf = NULL;
