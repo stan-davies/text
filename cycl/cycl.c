@@ -8,6 +8,7 @@
 #include "rend/rend.h"
 #include "text/text.h"
 #include "font/font.h"
+#include "keys/keys.h"
 
 void cycle(
         void
@@ -21,8 +22,14 @@ void cycle(
                         if (SDL_EVENT_QUIT == e.type) {
                                 return;
                         } else if (SDL_EVENT_KEY_DOWN == e.type) {
-                                if (SDLK_X == e.key.key) {
+                                if (SDLK_ESCAPE == e.key.key) {
                                         return;
+                                }
+                                
+                                if (KEYP_APPEND == log_keyp(e.key.key)) {
+                                        free(txt);
+                                        txt = NULL;
+                                        sprint_txt(&txt);
                                 }
                         }
                 }

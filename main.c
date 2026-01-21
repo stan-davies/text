@@ -9,6 +9,7 @@
 #include "rend/rend.h"
 #include "text/text.h"
 #include "cycl/cycl.h"
+#include "keys/keys.h"
 
 int main(int argc, char **argv) {
         init_logw();
@@ -22,21 +23,22 @@ int main(int argc, char **argv) {
         }
 
         init_rend(win);
-
         init_txt_man();
+        init_keys();
 
         log_msg("Program started successfully.");
 
         append_txt("world");
         move_cursor(-5);
         append_txt("hello ");
-        move_cursor(11);
+        move_cursor(5);
         append_txt("!");
 
         cycle();
 
         log_msg("Program quit, ending...");
 
+        dest_keys();
         dest_txt_man();
         dest_rend();
         end_sdl(&win);

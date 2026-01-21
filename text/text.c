@@ -13,7 +13,7 @@
  */
 struct str {
         char           *beg     ;       // Data begin.
-        char           *end     ;       // Data end.
+        char           *end     ;       // Data end - on the null terminator.
         size_t          len     ;       // Length of data.
 };
 
@@ -32,10 +32,11 @@ static struct {
 static struct str create_str(
         void
 ) {
+        char *base = calloc(1, sizeof(char));
         struct str s = {
-                .beg    = NULL  ,
-                .end    = NULL  ,
-                .len    = 0
+                .beg    = base  ,
+                .end    = base  ,
+                .len    = 1
         };
 
         return s;
@@ -56,25 +57,29 @@ static int resize_str(
         struct str             *s       ,
         int                     r
 ) {
-        if (s->len + r < 0) {           // IMPOSSIBLE
+        if (s->len + r < 0) {           // Not allowed.
                 return -1;
         }
 
         s->len += r;
 
-        if (0 == s->len) {              // EMPTIED
+        if (0 == s->len) {              // Emptied.
                 if (s->beg != NULL) {
                         free(s->beg);
                         s->beg = s->end = NULL;
-                }                       // BUT WAS ALREADY EMPTY
+                }                       // But was already empty.
 
                 return 0;
         }
 
-        s->beg = realloc(s->beg, s->len * sizeof(char));
+        size_t end_offset;
         if (NULL == s->end) {
-                s->end = s->beg;
+                end_offset = 0;
+        } else {
+                end_offset = s->end - s->beg;
         }
+        s->beg = realloc(s->beg, s->len * sizeof(char));
+        s->end = s->beg + end_offset;
 
         return s->len;
 }
@@ -135,11 +140,13 @@ int append_txt(
         }
 
         char *c = s;
-        char *new_e = txt.fore.beg + txt.fore.len;
+                                // End has been moved after realloc.
+        char *new_e = txt.fore.end + strlen(s);
         while (txt.fore.end < new_e) {
                 *txt.fore.end++ = *c++;
         }
-        *txt.fore.end = 0;
+        *txt.fore.end = '\0';
+
         return TRUE;
 }
 
@@ -157,16 +164,18 @@ int move_cursor(
                 dst = &txt.fore;
         }
 
-        offset = MIN(abs(offset), src->len);
+        offset = MIN(abs(offset), src->len - 1);    // -1 for null-terminator.
 
         if (0 == offset) {                 // Needed?
                 return TRUE;
         }
 
         resize_str(dst, offset);
-        while (src->end - src->beg > src->len - offset) {
+        char *new_e = src->end - offset;
+        while (src->end > new_e) {
                 *dst->end++ = *--src->end;
         }
+        *src->end = '\0';
         resize_str(src, -offset);
 
         return TRUE;
