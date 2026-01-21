@@ -8,7 +8,7 @@
 
 #include "rend/rend.h"
 #include "text/text.h"
-#include "font/font.h"
+#include "cycl/cycl.h"
 
 int main(int argc, char **argv) {
         SDL_Window *win;
@@ -27,32 +27,7 @@ int main(int argc, char **argv) {
         move_cursor(11);
         append_txt("!");
 
-        char *txt;
-        sprint_txt(&txt);
-
-        SDL_Event e;
-        int run = TRUE;
-        while (run) {
-                while (SDL_PollEvent(&e)) {
-                        if (SDL_EVENT_QUIT == e.type) {
-                                run = FALSE;
-                        } else if (SDL_EVENT_KEY_DOWN == e.type) {
-                                if (SDLK_X == e.key.key) {
-                                        run = FALSE;
-                                }
-                        }
-                }
-
-                rendcl();
-                if (!font_rend_text(txt, 50, 50)) {
-                        printf("Error printing message.\n");
-                        run = FALSE;
-                }
-                push_rend();
-        }
-
-        free(txt);
-        txt = NULL;
+        cycle();
 
         dest_txt_man();
         dest_rend();
