@@ -2,12 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL.h>
-#include <SDL_main.h>
+#include "util.h"
+
+#include "sdl-util/sdl-util.h"
 
 #include "text/text.h"
 
 int main(int argc, char **argv) {
+        SDL_Window *win;
+
+        if (!init_sdl(&win)) {
+                return 0;
+        }
+
         init_text_man();
 
         append_txt("world");
@@ -26,6 +33,7 @@ int main(int argc, char **argv) {
         print_txt();
 
         dest_text_man();
+        end_sdl(&win);
 
         return 0;
 }

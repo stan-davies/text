@@ -1,8 +1,8 @@
 CMD = gcc
-SRC = main.c text/text.c
+SRC = main.c text/text.c sdl-util/sdl-util.c
 OBJ = $(SRC:.c=.o)
 INC = -I .
-FLG = `sdl-config --cflags --libs`
+FLG = `pkg-config --cflags --libs sdl3`
 OUT = txt
 
 all : ${OBJ}
