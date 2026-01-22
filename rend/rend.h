@@ -3,7 +3,7 @@
 
 #include "util.h"
 
-void init_rend(
+int init_rend(
         SDL_Window     *win
 );
 

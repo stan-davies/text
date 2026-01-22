@@ -17,7 +17,8 @@ More specific points of what needs doing for now:
 
 For insertion:
 Change the 'complete' action on typing to be a timer? Especially since pressing
-enter now makes no discernable impact whatsoever.
+enter now makes no discernable impact whatsoever. Would also need to collapse
+on any cursor motion.
 Work out how best to handle symbols     - Only a problem for things that
 require pressing shift, so sort that out and caps together
 

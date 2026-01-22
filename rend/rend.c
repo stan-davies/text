@@ -8,11 +8,16 @@ static struct {
         .r      =       NULL
 };
 
-void init_rend(
+int init_rend(
         SDL_Window     *win
 ) {
         rend.r = SDL_CreateRenderer(win, NULL);
         rend.I = TRUE;
+
+        if (!SDL_SetRenderVSync(rend.r, 1)) {
+                log_err("Failed to enable VSync");
+                return FALSE;
+        }
 }
         
 void dest_rend(

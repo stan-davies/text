@@ -22,7 +22,9 @@ int main(int argc, char **argv) {
                 return 0;
         }
 
-        init_rend(win);
+        if (!init_rend(win)) {
+                // What to do?
+        }
         init_txt_man();
         init_keys();
 
