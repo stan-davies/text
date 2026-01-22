@@ -19,8 +19,13 @@ void print_txt(
         void
 );
 
+#define TXT_FORE                1       // 0b01
+#define TXT_AFT                 2       // 0b10
+#define TXT_BOTH                3       // 0b11
+
 void sprint_txt(
-        char                  **s               // Should be unallocated.
+        char                  **s       ,
+        int                     bits
 );
 
 int append_txt(

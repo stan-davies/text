@@ -51,7 +51,7 @@ int log_keyp(
                         goto exit;
                 }
 
-                ret = KEYP_APPEND;
+                ret = KEYP_APPEND;      // Don't exit yet though - ensure update.
         }
 
         if (SDLK_RETURN == k) {
@@ -61,6 +61,7 @@ int log_keyp(
         }
 
         keys.sq[keys.sq_l++] = k;       // Need to validate characters somehow.
+                                        // Add some kind of 'keycode_to_charcode()'
 exit:
         return ret;
 }

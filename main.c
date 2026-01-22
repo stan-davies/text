@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
         append_txt("hello ");
         move_cursor(5);
         append_txt("!");
+        move_cursor(-6);
 
         cycle();
 

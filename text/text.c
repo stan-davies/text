@@ -116,18 +116,30 @@ void print_txt(
         printf("'\n");
 }
 
+#define TXT_FORE_MASK   TXT_FORE
+#define TXT_AFT_MASK    TXT_AFT
+
 void sprint_txt(
-        char                  **s               // Should be unallocated.
+        char                  **s       ,
+        int                     bits
 ) {
-        *s = malloc((txt.fore.len + txt.aft.len + 1) * sizeof(char));// +1 for '\0'
+        int len = 1 +                   // +1 for '\0'
+                  txt.fore.len * (TXT_FORE == (bits & TXT_FORE_MASK)) +
+                  txt.aft.len  * (TXT_AFT  == (bits & TXT_AFT_MASK ));
+        *s = realloc(*s, len * sizeof(char));
         char *e = *s;
-        char *c = txt.fore.beg;
-        while (c < txt.fore.end) {
-                *e++ = *c++;                
+        char *c;
+        if (TXT_FORE == (bits & TXT_FORE_MASK)) {
+                c = txt.fore.beg;
+                while (c < txt.fore.end) {
+                        *e++ = *c++;                
+                }
         }
-        c = txt.aft.end + txt.aft.len;
-        while (c > txt.aft.beg) {
-                *e++ = *--c;
+        if (TXT_AFT == (bits & TXT_AFT_MASK)) {
+                c = txt.aft.end;
+                while (c > txt.aft.beg) {
+                        *e++ = *--c;
+                }
         }
         *e = '\0';
 }

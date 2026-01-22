@@ -13,9 +13,11 @@
 void cycle(
         void
 ) {
-                // Not really satisfied with this constant free/alloc thing.
-        char *txt_typed;
-        sprint_txt(&txt_typed);
+        // Manage all this stuff someplace else?
+        char *txt_typed_fore = NULL;
+        char *txt_typed_aft  = NULL;
+        sprint_txt(&txt_typed_fore, TXT_FORE);
+        sprint_txt(&txt_typed_aft,  TXT_AFT);
 
         char *txt_add = calloc(get_maxkeys(), sizeof(char));
 
@@ -38,16 +40,15 @@ void cycle(
                                 if (input_ev >= 0) {
                                         sprint_keybuf(&txt_add);
                                         if (KEYP_APPEND == input_ev) {
-                                                free(txt_typed);
-                                                txt_typed = NULL;
-                                                sprint_txt(&txt_typed);
+                                                sprint_txt(&txt_typed_fore, TXT_FORE);
                                         }
                                 }
+                                // Only update aft on cursor motion.
                         }
                 }
 
                 rendcl();
-                sprintf(txt_display, "%s%s", txt_typed, txt_add);
+                sprintf(txt_display, "%s%s%s", txt_typed_fore, txt_add, txt_typed_aft);
                 if (!font_rend_text(txt_display, 50, 50)) {
                         log_err("Error printing message.\n");
                         return;
@@ -55,8 +56,9 @@ void cycle(
                 push_rend();
         }
 
-        free(txt_typed);
+        free(txt_typed_fore);
+        free(txt_typed_aft);
         free(txt_add);
         free(txt_display);
-        txt_typed = txt_add = txt_display = NULL;
+        txt_typed_fore = txt_typed_aft = txt_add = txt_display = NULL;
 }
