@@ -20,7 +20,7 @@ void cycle(
         char *txt_add = calloc(get_maxkeys(), sizeof(char));
 
                 // Need a better way of setting length.
-        char *txt_display = calloc(2 * get_maxkeys(), sizeof(char));
+        char *txt_display = calloc(128 + get_maxkeys(), sizeof(char));
 
         int input_ev;
 

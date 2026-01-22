@@ -15,10 +15,16 @@ static struct {
         .sq_l           =       0
 };
 
-static void clear_keybuf(
+static int flush_keybuf(
         void
 ) {
-        keys.sq_l = keys.sq[0] = 0;
+        keys.sq[keys.sq_l] = '\0';      // = 0
+        if (!append_txt(keys.sq)) {
+                log_err("Failed to append input.");
+                return FALSE;
+        }
+        keys.sq_l = keys.sq[0] = 0;     // = '\0'
+        return TRUE;
 }
 
 void init_keys(
@@ -38,22 +44,25 @@ void dest_keys(
 int log_keyp(
         SDL_Keycode             k
 ) {
+        int ret = KEYP_INPUT;
         if (keys.sq_l >= MAX_KEY_SQ_LN) {
-                return KEYP_ERROR;
+                if (!flush_keybuf()) {
+                        ret = KEYP_ERROR;
+                        goto exit;
+                }
+
+                ret = KEYP_APPEND;
         }
 
         if (SDLK_RETURN == k) {
-                keys.sq[keys.sq_l] = '\0';
-                if (!append_txt(keys.sq)) {
-                        log_err("Failed to append input.");
-                        return KEYP_ERROR;
-                }
-                clear_keybuf();
-                return KEYP_APPEND;
+                // Insert hard return using some otherwise useless keycode.
+                ret = flush_keybuf() ? KEYP_APPEND : KEYP_ERROR;
+                goto exit;
         }
 
         keys.sq[keys.sq_l++] = k;       // Need to validate characters somehow.
-        return KEYP_INPUT;
+exit:
+        return ret;
 }
 
 int get_maxkeys(
