@@ -18,7 +18,7 @@ static struct {
 static void clear_keybuf(
         void
 ) {
-        keys.sq_l = 0;
+        keys.sq_l = keys.sq[0] = 0;
 }
 
 void init_keys(
@@ -44,11 +44,6 @@ int log_keyp(
 
         if (SDLK_RETURN == k) {
                 keys.sq[keys.sq_l] = '\0';
-                log_msg("appending string:");
-                for (int i = 0; i < keys.sq_l; ++i) {
-                        log_msg("  '%c'", keys.sq[i]);
-                }
-                        
                 if (!append_txt(keys.sq)) {
                         log_err("Failed to append input.");
                         return KEYP_ERROR;

@@ -18,6 +18,7 @@ More specific points of what needs doing for now:
 For insertion:
 Change the 'complete' action on typing to be a timer?
 Append characters after every input?
-Work out how best to handle symbols.
+Work out how best to handle symbols     - Only a problem for things that
+require pressing shift, so sort that out and caps together
 
 Work out cursor motion!
