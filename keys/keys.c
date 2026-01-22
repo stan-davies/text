@@ -56,3 +56,20 @@ int log_keyp(
         return KEYP_INPUT;
 }
 
+int get_maxkeys(
+        void
+) {
+        return MAX_KEY_SQ_LN;
+}
+
+void sprint_keybuf(
+        char                  **s
+) {
+        char *c = keys.sq;
+        char *e = *s;
+
+        while (c < keys.sq + keys.sq_l) {
+                *e++ = *c++;
+        }
+        *e = '\0';
+}

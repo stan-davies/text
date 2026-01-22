@@ -19,4 +19,12 @@ int log_keyp(
         SDL_Keycode             k
 );
 
+int get_maxkeys(
+        void
+);
+
+void sprint_keybuf(
+        char                  **s
+);
+
 #endif

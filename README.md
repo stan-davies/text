@@ -16,9 +16,10 @@ Some point throughout, tools such as creating grid, storing colours, ...
 More specific points of what needs doing for now:
 
 For insertion:
-Change the 'complete' action on typing to be a timer?
-Append characters after every input?
+Change the 'complete' action on typing to be a timer? Especially since pressing
+enter now makes no discernable impact whatsoever.
 Work out how best to handle symbols     - Only a problem for things that
 require pressing shift, so sort that out and caps together
 
 Work out cursor motion!
+Work out how to wrap text.
