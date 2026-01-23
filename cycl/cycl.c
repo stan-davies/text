@@ -59,12 +59,15 @@ void cycle(
                                 }
 
                                 input_ev = log_keyp(e.key.key);                
-                                if (input_ev >= 0) {
-                                        sprint_keybuf(&txt.typing);
-                                        if (KEYP_APPEND == input_ev) {
-                                                txt.display = realloc(txt.display, get_txtlen() + get_maxkeys() * sizeof(char));
-                                                sprint_txt(&txt.typed_fore, TXT_FORE);
-                                        }
+                                if (input_ev < 0) {
+                                        log_err("Problem taking input.");
+                                        return;
+                                }
+
+                                sprint_keybuf(&txt.typing);
+                                if (KEYP_APPEND == input_ev) {
+                                        txt.display = realloc(txt.display, get_txtlen() + get_maxkeys() * sizeof(char));
+                                        sprint_txt(&txt.typed_fore, TXT_FORE);
                                 }
                                 // Only update txt.typed_aft on cursor motion.
                         }

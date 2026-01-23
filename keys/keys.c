@@ -44,6 +44,8 @@ void dest_keys(
 int log_keyp(
         SDL_Keycode             k
 ) {
+        static int shift_d = FALSE;
+
         int ret = KEYP_INPUT;
         if (keys.sq_l >= MAX_KEY_SQ_LN) {
                 if (!flush_keybuf()) {
@@ -54,14 +56,24 @@ int log_keyp(
                 ret = KEYP_APPEND;      // Don't exit yet though - ensure update.
         }
 
-        if (SDLK_RETURN == k) {
+        switch (k) {
+        case SDLK_RETURN: 
                 // Insert hard return using some otherwise useless keycode.
                 ret = flush_keybuf() ? KEYP_APPEND : KEYP_ERROR;
-                goto exit;
+                break;
+        case SDLK_LSHIFT:               // Need to work with keyup too.
+                shift_d ^= 1;
+                break;
+        default:
+                if (shift_d && k >= 'a' && k <= 'z') {
+                        k += 'A' - 'a';
+                }
+                keys.sq[keys.sq_l++] = k;
+                        // Need to validate characters somehow. Add some kind
+                        // of 'keycode_to_charcode(code, shift_down)'
+                break;
         }
 
-        keys.sq[keys.sq_l++] = k;       // Need to validate characters somehow.
-                                        // Add some kind of 'keycode_to_charcode()'
 exit:
         return ret;
 }
