@@ -144,6 +144,12 @@ void sprint_txt(
         *e = '\0';
 }
 
+int get_txtlen(
+        void
+) {
+        return txt.fore.len + txt.aft.len - 2;  // Account for each '\0'.
+}
+
 int append_txt(
         char                   *s
 ) {

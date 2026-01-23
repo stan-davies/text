@@ -28,6 +28,10 @@ void sprint_txt(
         int                     bits
 );
 
+int get_txtlen(
+        void
+);
+
 int append_txt(
         char                   *s
 );

@@ -37,7 +37,9 @@ int main(int argc, char **argv) {
         append_txt("!");
         move_cursor(-6);
 
+        init_cycle();
         cycle();
+        end_cycle();
 
         log_msg("Program quit, ending...");
 

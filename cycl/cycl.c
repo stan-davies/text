@@ -10,22 +10,44 @@
 #include "font/font.h"
 #include "keys/keys.h"
 
-void cycle(
+static struct {
+        char           *typed_fore      ;
+        char           *typed_aft       ;
+        char           *typing          ;
+        
+        char           *display         ;
+} txt = {               // All the bits of text currently being shown.
+        .typed_fore     =       NULL    ,
+        .typed_aft      =       NULL    ,
+        .typing         =       NULL    ,
+        .display        =       NULL
+};
+
+void init_cycle(
         void
 ) {
         // Manage all this stuff someplace else?
-        char *txt_typed_fore = NULL;
-        char *txt_typed_aft  = NULL;
-        sprint_txt(&txt_typed_fore, TXT_FORE);
-        sprint_txt(&txt_typed_aft,  TXT_AFT);
+        sprint_txt(&txt.typed_fore, TXT_FORE);
+        sprint_txt(&txt.typed_aft,  TXT_AFT);
 
-        char *txt_add = calloc(get_maxkeys(), sizeof(char));
+        txt.typing = calloc(get_maxkeys(), sizeof(char));
+        txt.display = calloc(get_txtlen() + get_maxkeys(), sizeof(char));
+}
 
-                // Need a better way of setting length.
-        char *txt_display = calloc(128 + get_maxkeys(), sizeof(char));
+void end_cycle(
+        void
+) {
+        free(txt.typed_fore);
+        free(txt.typed_aft);
+        free(txt.typing);
+        free(txt.display);
+        txt.typed_fore = txt.typed_aft = txt.typing = txt.display = NULL;
+}
 
+void cycle(
+        void
+) {
         int input_ev;
-
         SDL_Event e;
         for (;;) {
                 while (SDL_PollEvent(&e)) {
@@ -38,27 +60,22 @@ void cycle(
 
                                 input_ev = log_keyp(e.key.key);                
                                 if (input_ev >= 0) {
-                                        sprint_keybuf(&txt_add);
+                                        sprint_keybuf(&txt.typing);
                                         if (KEYP_APPEND == input_ev) {
-                                                sprint_txt(&txt_typed_fore, TXT_FORE);
+                                                txt.display = realloc(txt.display, get_txtlen() + get_maxkeys() * sizeof(char));
+                                                sprint_txt(&txt.typed_fore, TXT_FORE);
                                         }
                                 }
-                                // Only update aft on cursor motion.
+                                // Only update txt.typed_aft on cursor motion.
                         }
                 }
 
                 rendcl();
-                sprintf(txt_display, "%s%s%s", txt_typed_fore, txt_add, txt_typed_aft);
-                if (!font_rend_text(txt_display, 50, 50)) {
+                sprintf(txt.display, "%s%s%s", txt.typed_fore, txt.typing, txt.typed_aft);
+                if (!font_rend_text(txt.display, 50, 50)) {
                         log_err("Error printing message.\n");
                         return;
                 }
                 push_rend();
         }
-
-        free(txt_typed_fore);
-        free(txt_typed_aft);
-        free(txt_add);
-        free(txt_display);
-        txt_typed_fore = txt_typed_aft = txt_add = txt_display = NULL;
 }
