@@ -14,9 +14,11 @@ void dest_keys(
 #define KEYP_INPUT              0       // Ordinary text input.
 #define KEYP_APPEND             1       // Enter was hit, text was appended.
 #define KEYP_ERROR             -1       // Something went wrong.
+#define KEYP_NOTHING            2
 
 int log_keyp(
-        SDL_Keycode             k
+        SDL_Scancode            k       ,
+        int                     shift_d
 );
 
 int get_maxkeys(

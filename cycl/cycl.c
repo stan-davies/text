@@ -47,7 +47,6 @@ void end_cycle(
 void cycle(
         void
 ) {
-        int input_ev;
         SDL_Event e;
         for (;;) {
                 while (SDL_PollEvent(&e)) {
@@ -58,16 +57,19 @@ void cycle(
                                         return;
                                 }
 
-                                input_ev = log_keyp(e.key.key);                
-                                if (input_ev < 0) {
-                                        log_err("Problem taking input.");
-                                        return;
-                                }
-
-                                sprint_keybuf(&txt.typing);
-                                if (KEYP_APPEND == input_ev) {
+                                switch (log_keyp(e.key.scancode, e.key.mod == SDL_KMOD_LSHIFT)) {
+                                case KEYP_NOTHING:
+                                        break;
+                                case KEYP_APPEND:
                                         txt.display = realloc(txt.display, get_txtlen() + get_maxkeys() * sizeof(char));
                                         sprint_txt(&txt.typed_fore, TXT_FORE);
+                                        // No break.
+                                case KEYP_INPUT:
+                                        sprint_keybuf(&txt.typing);
+                                        break;
+                                default:
+                                        log_err("Problem taking input.");
+                                        return;
                                 }
                                 // Only update txt.typed_aft on cursor motion.
                         }
