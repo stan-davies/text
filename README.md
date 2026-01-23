@@ -19,8 +19,13 @@ For insertion:
 Change the 'complete' action on typing to be a timer? Especially since pressing
 enter now makes no discernable impact whatsoever. Would also need to collapse
 on any cursor motion.
-Work out how best to handle symbols     - Only a problem for things that
-require pressing shift, so sort that out and caps together
+See about that SDL_StartTextInput and whether is really is worthwhile. The SDL
+wiki says that what I have done (reinventing the wheel) is really very foolish
+because it won't support the input of every language ever. Fortunately, I don't
+have plans _that_ grand, so I think letting it only support English for now is
+quite reasonable. Getting it to support the input of more special characters
+could be a nice idea, but I am not overly fussed.
 
 Work out cursor motion!
-Work out how to wrap text.
+Work out how to wrap text.      - How to work out width of a given character
+for a given font and point size?

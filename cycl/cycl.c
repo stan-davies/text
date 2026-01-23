@@ -44,6 +44,28 @@ void end_cycle(
         txt.typed_fore = txt.typed_aft = txt.typing = txt.display = NULL;
 }
 
+static int reg_keyb_input(
+        SDL_Event               e
+) {
+        switch (log_keyp(e.key.scancode, e.key.mod == SDL_KMOD_LSHIFT)) {
+        case KEYP_NOTHING:
+                break;
+        case KEYP_APPEND:
+                txt.display = realloc(txt.display,
+                                get_txtlen() + get_maxkeys() * sizeof(char));
+                sprint_txt(&txt.typed_fore, TXT_FORE);
+                // No break, want to flow into the next case.
+        case KEYP_INPUT:
+                sprint_keybuf(&txt.typing);
+                break;
+        default:
+                log_err("Problem taking input.");
+                return FALSE;
+        }
+
+        return TRUE;
+}
+
 void cycle(
         void
 ) {
@@ -55,28 +77,22 @@ void cycle(
                         } else if (SDL_EVENT_KEY_DOWN == e.type) {
                                 if (SDLK_ESCAPE == e.key.key) {
                                         return;
-                                }
-
-                                switch (log_keyp(e.key.scancode, e.key.mod == SDL_KMOD_LSHIFT)) {
-                                case KEYP_NOTHING:
-                                        break;
-                                case KEYP_APPEND:
-                                        txt.display = realloc(txt.display, get_txtlen() + get_maxkeys() * sizeof(char));
-                                        sprint_txt(&txt.typed_fore, TXT_FORE);
-                                        // No break.
-                                case KEYP_INPUT:
-                                        sprint_keybuf(&txt.typing);
-                                        break;
-                                default:
-                                        log_err("Problem taking input.");
+                                } else if (!reg_keyb_input(e)) {
                                         return;
                                 }
                                 // Only update txt.typed_aft on cursor motion.
-                        }
+                        } // else if (SDL_EVENT_MOUSEBUTTON_DOWN) {
+                        /*      Go and see if it is hovering over text (may
+                         *      want to first do better text rendering) and
+                         *      then find where exactly the mouse is hovering
+                         *      and thus move cursor... =o
+                         * }
+                         */
                 }
 
                 rendcl();
-                sprintf(txt.display, "%s%s%s", txt.typed_fore, txt.typing, txt.typed_aft);
+                sprintf(txt.display, "%s%s%s",
+                        txt.typed_fore, txt.typing, txt.typed_aft);
                 if (!font_rend_text(txt.display, 50, 50)) {
                         log_err("Error printing message.\n");
                         return;
