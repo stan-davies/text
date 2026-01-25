@@ -23,6 +23,9 @@ static struct {
         .display        =       NULL
 };
 
+static Uint64 press_time = 0;
+static int could_append = FALSE;
+
 void init_cycle(
         void
 ) {
@@ -44,6 +47,17 @@ void end_cycle(
         txt.typed_fore = txt.typed_aft = txt.typing = txt.display = NULL;
 }
 
+static void do_append(
+        void
+) {
+        txt.display = realloc(txt.display,
+                        get_txtlen() + get_maxkeys() * sizeof(char));
+        sprint_txt(&txt.typed_fore, TXT_FORE);
+        sprint_keybuf(&txt.typing);
+
+        could_append = FALSE;
+}
+
 static int reg_keyb_input(
         SDL_Event               e
 ) {
@@ -51,11 +65,10 @@ static int reg_keyb_input(
         case KEYP_NOTHING:
                 break;
         case KEYP_APPEND:
-                txt.display = realloc(txt.display,
-                                get_txtlen() + get_maxkeys() * sizeof(char));
-                sprint_txt(&txt.typed_fore, TXT_FORE);
-                // No break, want to flow into the next case.
+                do_append();
+                break;
         case KEYP_INPUT:
+                could_append = TRUE;
                 sprint_keybuf(&txt.typing);
                 break;
         default:
@@ -70,7 +83,9 @@ void cycle(
         void
 ) {
         SDL_Event e;
+        Uint64 curr_time;
         for (;;) {
+                curr_time = SDL_GetTicks();                       
                 while (SDL_PollEvent(&e)) {
                         if (SDL_EVENT_QUIT == e.type) {
                                 return;
@@ -80,6 +95,8 @@ void cycle(
                                 } else if (!reg_keyb_input(e)) {
                                         return;
                                 }
+                                press_time = curr_time;
+
                                 // Only update txt.typed_aft on cursor motion.
                         } // else if (SDL_EVENT_MOUSEBUTTON_DOWN) {
                         /*      Go and see if it is hovering over text (may
@@ -90,9 +107,15 @@ void cycle(
                          */
                 }
 
-                rendcl();
+                        // 2 second break since last input then append.
+                if (could_append && (curr_time - press_time) / 1000 >= 2) {
+                        do_append();
+                }
+
                 sprintf(txt.display, "%s%s%s",
                         txt.typed_fore, txt.typing, txt.typed_aft);
+
+                rendcl();
                 if (!font_rend_text(txt.display, 50, 50)) {
                         log_err("Error printing message.\n");
                         return;
