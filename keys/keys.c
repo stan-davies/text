@@ -57,7 +57,8 @@ int log_keyp(
 
         switch (k) {
         case SDL_SCANCODE_RETURN: 
-                // Insert hard return using some otherwise useless keycode.
+                keys.sq[keys.sq_l++] = '\n';
+                // Perhaps not necessary but seems sensible enough.
                 ret = flush_keybuf() ? KEYP_APPEND : KEYP_ERROR;
                 break;
         case SDL_SCANCODE_LSHIFT:

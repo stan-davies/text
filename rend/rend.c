@@ -58,6 +58,10 @@ int rend_srf(
         int             x       ,
         int             y
 ) {
+        if (!rend.I) {
+                return FALSE;
+        }
+
         SDL_Texture *tex = SDL_CreateTextureFromSurface(rend.r, srf);
         SDL_FRect    dst = { x, y, srf->w, srf->h };
 
