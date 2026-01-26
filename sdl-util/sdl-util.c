@@ -12,7 +12,8 @@ int init_sdl(
                 return FALSE;
         }
 
-        *win = SDL_CreateWindow("text", 800, 600, SDL_WINDOW_INPUT_FOCUS);
+        *win = SDL_CreateWindow("text", SCREEN_WIDTH, SCREEN_HEIGHT,
+                                                SDL_WINDOW_INPUT_FOCUS);
 
         if (!*win) {
                 log_err("Error creating window.");
