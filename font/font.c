@@ -6,9 +6,14 @@
 
 #include "util.h"
 #include "rend/rend.h"
+#include "writer/writer.h"
 
 static struct {
         TTF_Font       *f       ;
+        struct {
+                int     w       ;
+                int     h       ;
+        } char_size             ;
 } font;
 
 static int write_line(
@@ -22,6 +27,8 @@ static int write_line(
                 log_err("Trying to write an empty line. This will cause a segmentation fault.");
                 return FALSE;
         }
+
+        log_msg("trying to write '%s'", txt);
 
         int ret = TRUE;
         SDL_Surface *srf = TTF_RenderText_Blended(font.f, txt, 0, black);
@@ -48,6 +55,7 @@ int init_font(
                 // quit TTF?
                 return FALSE;
         }
+        TTF_GetStringSize(font.f, "A", 1, &font.char_size.w, &font.char_size.h);
 
         return TRUE;
 }
@@ -65,41 +73,65 @@ int font_rend_text(
         float           x       ,
         float           y
 ) {
-        int char_width, char_height;
-        TTF_GetStringSize(font.f, "A", 1, &char_width, &char_height);
-
-        int chars_per_line = 0.9f * SCREEN_WIDTH / char_width;        
-        char *curr_line = calloc(chars_per_line + 1, sizeof(char));
-
-        char *c = txt;
-        int i = 0;
-        int lines = 0;
-        int run = TRUE;
         int ret = TRUE;
+        int chars_per_line = 0.9f * SCREEN_WIDTH / (float)font.char_size.w;
 
-        while (run) {
-                if ('\0' == *c) {
-                        run = FALSE;
-                } else if ('\n' == *c) {
-                        c++;
-                        if (0 == i) {
-                                goto linefeed;
-                        }
-                } else if (i < chars_per_line) {
-                        curr_line[i++] = *c++;
-                        continue;
-                }
-                curr_line[i] = '\0';
-                if (!write_line(curr_line, x, y + (float)(lines * char_height))) {
+        char *curr_line = calloc(chars_per_line + 1, sizeof(char));
+        int lines = 0;
+        int cont = TRUE;
+
+        init_writer(txt, chars_per_line);
+
+        for (;;) {
+                cont = writer_getline(&curr_line);
+                if (!write_line(curr_line, x, y + (float)(lines) * font.char_size.h)) {
+                        log_err("Failed to print line.");
                         ret = FALSE;
                         break;
                 }
-linefeed:
-                i = 0;
+
+                if (!cont) {
+                        break;
+                }
+
                 lines++;
         }
 
+        dest_writer();
         free(curr_line);
         curr_line = NULL;
+
+
+
+
+        
+
+//        char *c = txt;
+//        int i = 0;
+//        int lines = 0;
+//        int run = TRUE;
+//        int ret = TRUE;
+//        while (run) {
+//                if ('\0' == *c) {
+//                        run = FALSE;
+//                } else if ('\n' == *c) {
+//                        c++;
+//                        if (0 == i) {
+//                                goto linefeed;
+//                        }
+//                } else if (i < chars_per_line) {
+//                        curr_line[i++] = *c++;
+//                        continue;
+//                }
+//                curr_line[i] = '\0';
+//                if (!write_line(curr_line, x, y + (float)(lines * font.char_size.h))) {
+//                        ret = FALSE;
+//                        break;
+//                }
+//linefeed:
+//                i = 0;
+//                lines++;
+//        }
+
         return ret;
 }

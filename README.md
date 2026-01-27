@@ -14,9 +14,15 @@ multiple that are linked by a file describing the location and size of each.
 Some point throughout, tools such as creating grid, storing colours, ...
 
 More specific points of what needs doing for now:
-- Work out cursor motion!
-- Work out how to wrap text.      - How to work out width of a given character
-                                    for a given font and point size?
+- Work out cursor motion - going to connect it with rendering (see odecd book).
+- Work out how to wrap words as wholes rather than character specific (again,
+  see odecd book).      - It is getting super confused sometimes.
+- Draw text block as lines to a texture then store that texture. If no keyboard
+  input since last frame, redraw the same texture.
+- Draw cursor as a rectangle or something.
+- Implement delete - maybe a clear currently editing to main text then pluck
+  characters off the end of there. Alternatively: remove from editing string
+  until empty, then pop from main text.
 
 
 
