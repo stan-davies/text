@@ -84,17 +84,25 @@ int writer_getline(
         for (;;) {
                 clear_word();
                 for (;;) {
+                        log_msg("dealing with %d", *writer.txt.edt);
+                        if (writer.txt.edt - writer.txt.str > writer.txt.len) {
+                                log_err("gone beyond");
+                        }
                         if (' ' == *writer.txt.edt) {
+                                log_msg("break space");
                                 break;
                         } else if ('\0' == *writer.txt.edt) {
                                 lbreak = TRUE;
                                 more_text = FALSE;
+                                log_msg("break null");
                                 break;
                         } else if ('\n' == *writer.txt.edt) {
                                 lbreak = TRUE;
+                                log_msg("break linefeed");
                                 break;
                         } else if (writer.curr_word.edt_len == writer.curr_word.len - 1) {
                                 writer.txt.edt++;
+                                log_msg("break capacity");
                                 goto flush;
                         }
                         *writer.curr_word.edt++ = *writer.txt.edt++;
@@ -103,10 +111,11 @@ int writer_getline(
 
                 writer.txt.edt++;       // Move past control character.
 
+                        // If word doesn't fit on line.
                 if (writer.curr_line.edt_len + writer.curr_word.edt_len > writer.curr_line.len) {
                         writer.txt.edt_len -= writer.curr_word.edt_len;
 flush:
-                        *--writer.curr_line.edt = '\0'; // Replace end ' '.
+                        *--writer.curr_line.edt = '\0'; // Replaces end ' '.
                         strcpy(*ln, writer.curr_line.str);
                         return more_text;
                 }
@@ -115,7 +124,9 @@ flush:
                 *writer.curr_word.edt = '\0';
                 strcpy(writer.curr_line.edt, writer.curr_word.str);
                 writer.curr_line.edt += writer.curr_word.edt_len + 1;
-                writer.curr_line.edt_len += writer.curr_word.edt_len + 1;
+                writer.curr_line.edt_len -= writer.curr_word.edt_len + 1;
+                // This occasionally fails to print?
+                log_msg("adding word '%s' - total %d", writer.curr_word.str, writer.curr_word.edt_len);
 
                 if (lbreak) {
                         goto flush;

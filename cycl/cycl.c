@@ -84,12 +84,15 @@ void cycle(
 ) {
         SDL_Event e;
         Uint64 curr_time;
+        int input = TRUE;
         for (;;) {
                 curr_time = SDL_GetTicks();                       
                 while (SDL_PollEvent(&e)) {
                         if (SDL_EVENT_QUIT == e.type) {
                                 return;
                         } else if (SDL_EVENT_KEY_DOWN == e.type) {
+                                input = TRUE;
+
                                 if (SDLK_ESCAPE == e.key.key) {
                                         return;
                                 } else if (!reg_keyb_input(e)) {
@@ -116,15 +119,29 @@ void cycle(
                 if (could_append && (curr_time - press_time) / 1000 >= 2) {
                         do_append();
                 }
+                
+                rendcl();
+
+                if (!input) {
+                        if (!rend_cached_txt()) {
+                                log_err("Error printing message.");
+                                return;
+                        }
+                        goto cont;
+                }
 
                 sprintf(txt.display, "%s%s%s",
                         txt.typed_fore, txt.typing, txt.typed_aft);
 
-                rendcl();
+                log_msg("text '%s'", txt.display);
+
                 if (!font_rend_text(txt.display, 50, 50)) {
-                        log_err("Error printing message.\n");
+                        log_err("Error printing message.");
                         return;
                 }
+
+cont:
                 push_rend();
+                input = FALSE;
         }
 }

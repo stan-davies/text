@@ -28,7 +28,7 @@ static int write_line(
                 return FALSE;
         }
 
-        log_msg("trying to write '%s'", txt);
+        log_msg("writing '%s' - %d", txt, strlen(txt));
 
         int ret = TRUE;
         SDL_Surface *srf = TTF_RenderText_Blended(font.f, txt, 0, black);

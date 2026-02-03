@@ -3,6 +3,11 @@
 static struct {
         int             I       ;
         SDL_Renderer   *r       ;
+
+        struct {
+                SDL_Texture    *tex     ;
+                SDL_FRect       dst     ;
+        } cache                         ;
 } rend = {
         .I      =       FALSE   ,
         .r      =       NULL
@@ -18,6 +23,7 @@ int init_rend(
                 log_err("Failed to enable VSync");
                 return FALSE;
         }
+        return TRUE;
 }
         
 void dest_rend(
@@ -26,6 +32,9 @@ void dest_rend(
         SDL_DestroyRenderer(rend.r);
         rend.r = NULL;
         rend.I = FALSE;
+
+        SDL_DestroyTexture(rend.cache.tex);
+        rend.cache.tex = NULL;
 }
 
 void rendcl(
@@ -49,8 +58,7 @@ int rend_tex(
                 return FALSE;
         }
 
-        SDL_RenderTexture(rend.r, tex, NULL, &dst);
-        return TRUE;
+        return SDL_RenderTexture(rend.r, tex, NULL, &dst);
 }
 
 int rend_srf(
@@ -65,5 +73,30 @@ int rend_srf(
         SDL_Texture *tex = SDL_CreateTextureFromSurface(rend.r, srf);
         SDL_FRect    dst = { x, y, srf->w, srf->h };
 
-        return rend_tex(tex, dst);
+        if (NULL == tex) {
+                log_err("Failed to create texture from surface.");
+                return FALSE;
+        }
+
+        int ret = rend_tex(tex, dst);
+
+        SDL_DestroyTexture(rend.cache.tex);
+        rend.cache.tex = tex;
+        rend.cache.dst = dst;
+
+//        SDL_DestroyTexture(tex);
+//        tex = NULL;
+
+        return ret;
+}
+
+int rend_cached_txt(
+        void
+) {
+        if (NULL == rend.cache.tex) {
+                log_err("No cached texture to render.");
+                return FALSE;
+        }
+
+        return rend_tex(rend.cache.tex, rend.cache.dst);
 }

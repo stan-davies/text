@@ -24,6 +24,15 @@ More specific points of what needs doing for now:
   characters off the end of there. Alternatively: remove from editing string
   until empty, then pop from main text.
 
+Current problem is an annoying bit of heap corruption in creating a texture
+from the surface. Typing 'how ' (for 'how is this looking') causes the error,
+though precisely four frames of the full text are rendered before the heap
+corruption occurs. Very confused. It also seems that, if instead four
+characters ending in a letter, rather than a space, are entered, then the error
+instead crops us when trying to free the texture. If it is a linefeed, then it
+is the actuall rendering call that crashes. In all cases, however, heap
+corruption, and always after four frames of the fourth character.
+
 
 
 Research notes (i.e. stuff I want to remember but won't be implementing in any

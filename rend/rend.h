@@ -49,4 +49,11 @@ int rend_srf(
         int             y
 );
 
+/*
+ * Re-renders the last text that was rendered, and in the same location.
+ */
+int rend_cached_txt(
+        void
+);
+
 #endif
