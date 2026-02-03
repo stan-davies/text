@@ -13,6 +13,13 @@ static struct {
         .r      =       NULL
 };
 
+static void rendcl(
+        void
+) {
+        SDL_SetRenderDrawColor(rend.r, 255, 255, 255, 255);
+        SDL_RenderClear(rend.r);
+}
+
 int init_rend(
         SDL_Window     *win
 ) {
@@ -23,6 +30,12 @@ int init_rend(
                 log_err("Failed to enable VSync");
                 return FALSE;
         }
+        
+        rend.cache.tex = SDL_CreateTexture(rend.r, SDL_PIXELFORMAT_RGBA8888,
+                SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        SDL_SetRenderTarget(rend.r, rend.cache.tex);
+
         return TRUE;
 }
         
@@ -37,17 +50,30 @@ void dest_rend(
         rend.cache.tex = NULL;
 }
 
-void rendcl(
+void clear_cache(
         void
 ) {
-        SDL_SetRenderDrawColor(rend.r, 255, 255, 255, 255);
-        SDL_RenderClear(rend.r);
+        rendcl();
 }
 
-void push_rend(
+int rend_cache(
         void
 ) {
+        SDL_SetRenderTarget(rend.r, NULL);
+
+        rendcl();
+
+        SDL_FRect dst = { 0, 0, rend.cache.tex->w, rend.cache.tex->h };
+        if (!rend_tex(rend.cache.tex, dst)) {
+                log_err("Failed to render cached texture.");
+                return FALSE;
+        }
+
         SDL_RenderPresent(rend.r);
+
+        SDL_SetRenderTarget(rend.r, rend.cache.tex);
+
+        return TRUE;
 }
 
 int rend_tex(
@@ -80,23 +106,8 @@ int rend_srf(
 
         int ret = rend_tex(tex, dst);
 
-        SDL_DestroyTexture(rend.cache.tex);
-        rend.cache.tex = tex;
-        rend.cache.dst = dst;
-
-//        SDL_DestroyTexture(tex);
-//        tex = NULL;
+        SDL_DestroyTexture(tex);
+        tex = NULL;
 
         return ret;
-}
-
-int rend_cached_txt(
-        void
-) {
-        if (NULL == rend.cache.tex) {
-                log_err("No cached texture to render.");
-                return FALSE;
-        }
-
-        return rend_tex(rend.cache.tex, rend.cache.dst);
 }

@@ -33,6 +33,7 @@ instead crops us when trying to free the texture. If it is a linefeed, then it
 is the actuall rendering call that crashes. In all cases, however, heap
 corruption, and always after four frames of the fourth character.
 
+Caching now works a lot better but it still sometimes crashes spontaneously.
 
 
 Research notes (i.e. stuff I want to remember but won't be implementing in any

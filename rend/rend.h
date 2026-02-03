@@ -18,17 +18,16 @@ void dest_rend(
 );
 
 /*
- * Clears the render context ready for next frame.
+ * Clears the cached texture so that it can be redrawn.
  */
-void rendcl(
+void clear_cache(
         void
 );
 
 /*
- * Flushes current frames renderings to the window. Should be called after
- * `rendcl` and other rendering calls.
+ * Renders cached texture to window.
  */
-void push_rend(
+int rend_cache(
         void
 );
 
@@ -47,13 +46,6 @@ int rend_srf(
         SDL_Surface    *srf     ,
         int             x       ,
         int             y
-);
-
-/*
- * Re-renders the last text that was rendered, and in the same location.
- */
-int rend_cached_txt(
-        void
 );
 
 #endif

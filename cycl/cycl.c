@@ -119,14 +119,8 @@ void cycle(
                 if (could_append && (curr_time - press_time) / 1000 >= 2) {
                         do_append();
                 }
-                
-                rendcl();
 
                 if (!input) {
-                        if (!rend_cached_txt()) {
-                                log_err("Error printing message.");
-                                return;
-                        }
                         goto cont;
                 }
 
@@ -135,13 +129,14 @@ void cycle(
 
                 log_msg("text '%s'", txt.display);
 
+                clear_cache();
                 if (!font_rend_text(txt.display, 50, 50)) {
                         log_err("Error printing message.");
                         return;
                 }
 
 cont:
-                push_rend();
+                rend_cache();    // Renders cache.
                 input = FALSE;
         }
 }

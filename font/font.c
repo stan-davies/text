@@ -84,6 +84,11 @@ int font_rend_text(
 
         for (;;) {
                 cont = writer_getline(&curr_line);
+                if (0 == strlen(curr_line)) {
+                        lines++;
+                        continue;
+                }
+
                 if (!write_line(curr_line, x, y + (float)(lines) * font.char_size.h)) {
                         log_err("Failed to print line.");
                         ret = FALSE;

@@ -81,6 +81,7 @@ int writer_getline(
         int more_text = TRUE;
         int lbreak = FALSE;
         clear_line();
+        log_msg("more to read");
         for (;;) {
                 clear_word();
                 for (;;) {
@@ -110,6 +111,7 @@ int writer_getline(
                 }
 
                 writer.txt.edt++;       // Move past control character.
+                        // Could be allowing read beyond capacity?
 
                         // If word doesn't fit on line.
                 if (writer.curr_line.edt_len + writer.curr_word.edt_len > writer.curr_line.len) {
@@ -124,8 +126,7 @@ flush:
                 *writer.curr_word.edt = '\0';
                 strcpy(writer.curr_line.edt, writer.curr_word.str);
                 writer.curr_line.edt += writer.curr_word.edt_len + 1;
-                writer.curr_line.edt_len -= writer.curr_word.edt_len + 1;
-                // This occasionally fails to print?
+                writer.curr_line.edt_len += writer.curr_word.edt_len + 1;
                 log_msg("adding word '%s' - total %d", writer.curr_word.str, writer.curr_word.edt_len);
 
                 if (lbreak) {
