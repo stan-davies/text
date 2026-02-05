@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#define LOGF_PATH "logf"
+#define LOGF_PATH "info.log"
 
 // Because of wanting this to be included easily everywhere, this is included
 // from the same file in which I defined true and false. To avoid any confusing

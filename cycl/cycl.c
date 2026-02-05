@@ -124,6 +124,7 @@ void cycle(
                         goto cont;
                 }
 
+        // Could this be getting messed up?
                 sprintf(txt.display, "%s%s%s",
                         txt.typed_fore, txt.typing, txt.typed_aft);
 
