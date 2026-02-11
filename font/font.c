@@ -28,8 +28,6 @@ static int write_line(
                 return FALSE;
         }
 
-        log_msg("writing '%s' - %d", txt, strlen(txt));
-
         int ret = TRUE;
         SDL_Surface *srf = TTF_RenderText_Blended(font.f, txt, 0, black);
         if (!rend_srf(srf, x, y)) {
@@ -80,14 +78,10 @@ int font_rend_text(
         int lines = 0;
         int more_lns = TRUE;
 
-        log_msg("prepare writer");
-
         init_writer(txt, chars_per_line);
 
         for (;;) {
-                log_msg("getting line");
                 more_lns = writer_getline(&curr_line);
-                log_msg("got '%s' - %d", curr_line, strlen(curr_line));
                 if (0 == strlen(curr_line)) {
                         goto loop_end;
                 }

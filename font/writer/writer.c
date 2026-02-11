@@ -84,16 +84,11 @@ static void clear_line(
         memset(writer.curr_line.str, 0, writer.curr_line.len);
 }
 
-static inline void adv_txthead( // Advance text read head.
-        int             m
+static inline void adv_txthead(         // Advance text read head.
+        void
 ) {
         writer.txt.edt++;
         writer.txt.edt_len++;
-
-        // Does seem to happen?
-        if (writer.txt.edt_len > writer.txt.len) {
-                log_wrn("overadvanced in  %d by %d", m, writer.txt.edt_len - writer.txt.len);
-        }
 }
 
 int writer_getline(
@@ -106,43 +101,29 @@ int writer_getline(
         int more_text = TRUE;
         int lbreak = FALSE;
         clear_line();
-        log_msg("more to read");
 
         for (;;) {
                 clear_word();
                 for (;;) {
-                        if (writer.txt.edt < writer.txt.str || writer.txt.edt >= writer.txt.str + writer.txt.len) {
-                                log_err("text out of bounds");
-                        }
-                        log_msg("dealing with '%c' - %d", *writer.txt.edt, *writer.txt.edt);
-                        // Sometimes in here with overadvanced text read head.
                         if (' ' == *writer.txt.edt) {
-                                log_msg("break space");
                                 break;
                         } else if ('\0' == *writer.txt.edt) {
                                 lbreak = TRUE;
                                 writer.locked = more_text = FALSE;
-                                log_msg("break null");
                                 break;
                         } else if ('\n' == *writer.txt.edt) {
                                 lbreak = TRUE;
-                                log_msg("break linefeed");
                                 break;
                         } else if (writer.curr_word.edt_len == writer.curr_word.len - 1) {
-                                adv_txthead(1);
-                                log_msg("break capacity");
+                                adv_txthead();
                                 goto flush;
                         }
                         *writer.curr_word.edt++ = *writer.txt.edt;
-                        adv_txthead(2);
+                        adv_txthead();
                         writer.curr_word.edt_len++;
-                        if (writer.curr_word.edt < writer.curr_word.str || writer.curr_word.edt >= writer.curr_word.str + writer.curr_word.len) {
-                                log_err("curr word out of bounds");
-                        }
                 }
 
-                adv_txthead(3);          // Move past control character.
-                        // Could be allowing read beyond capacity?
+                adv_txthead();          // Move past control character.
 
                 if (0 == writer.curr_word.edt_len && !lbreak) {
                         continue;
@@ -152,23 +133,16 @@ int writer_getline(
                 if (writer.curr_line.edt_len + writer.curr_word.edt_len > writer.curr_line.len) {
                         writer.txt.edt_len -= writer.curr_word.edt_len;
 flush:
-                        if (writer.curr_line.edt < writer.curr_line.str || writer.curr_line.edt >= writer.curr_line.str + writer.curr_line.len) {
-                                log_err("curr line out of bounds");
-                        }
                         *--writer.curr_line.edt = '\0'; // Replaces end ' '.
                         strcpy(*ln, writer.curr_line.str);
                         return more_text;
                 }
 
-                if (writer.curr_word.edt < writer.curr_word.str || writer.curr_word.edt >= writer.curr_word.str + writer.curr_word.len) {
-                        log_err("curr word out of bounds");
-                }
                 *writer.curr_word.edt++ = ' ';
                 *writer.curr_word.edt = '\0';
                 strcpy(writer.curr_line.edt, writer.curr_word.str);
                 writer.curr_line.edt += writer.curr_word.edt_len + 1;
                 writer.curr_line.edt_len += writer.curr_word.edt_len + 1;
-                log_msg("adding word '%s' - total %d", writer.curr_word.str, writer.curr_word.edt_len);
 
                 if (lbreak) {
                         goto flush;

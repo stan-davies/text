@@ -128,11 +128,8 @@ void cycle(
                         goto cont;
                 }
 
-        // Could this be getting messed up?
                 sprintf(txt.display, "%s%s%s",
                         txt.typed_fore, txt.typing, txt.typed_aft);
-
-                log_msg("to render: '%s'", txt.display);
 
                 clear_cache();
                 if (!font_rend_text(txt.display, 50, 50)) {

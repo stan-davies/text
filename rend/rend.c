@@ -109,10 +109,6 @@ int rend_srf(
         }
 
         int ret = rend_tex(tex, dst);
-        
-        if (ret) {
-                log_msg("texture drawn\n-----\n");
-        }
 
         SDL_DestroyTexture(tex);
         tex = NULL;

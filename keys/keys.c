@@ -69,7 +69,6 @@ int log_keyp(
                 break;
         default:
                 keys.sq[keys.sq_l++] = SDL_GetKeyFromScancode(k, SDL_KMOD_SHIFT * shift_d, false);
-                log_msg("Entered '%c' - %d.", keys.sq[keys.sq_l - 1]);
                 break;
         }
 
@@ -86,7 +85,6 @@ int get_maxkeys(
 void sprint_keybuf(
         char                  **s
 ) {
-        log_msg("Extracting key sequence: '%s' - %d", keys.sq, keys.sq_l);
         char *c = keys.sq;
         char *e = *s;
 

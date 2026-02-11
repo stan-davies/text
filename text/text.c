@@ -139,7 +139,6 @@ void sprint_txt(
         }
         char *e = *s;
         char *c;
-        log_msg("Copying up from '%s' and '%s'.", txt.fore.beg, txt.aft.beg);
         if (TXT_FORE == (bits & TXT_FORE_MASK)) {
                 c = txt.fore.beg;
                 while (c < txt.fore.end) {
