@@ -29,7 +29,6 @@ static int could_append = FALSE;
 void init_cycle(
         void
 ) {
-        // Manage all this stuff someplace else?
         sprint_txt(&txt.typed_fore, TXT_FORE);
         sprint_txt(&txt.typed_aft,  TXT_AFT);
 
@@ -50,8 +49,13 @@ void end_cycle(
 static void do_append(
         void
 ) {
+        flush_keybuf();
+
         txt.display = realloc(txt.display,
-                        get_txtlen() + get_maxkeys() * sizeof(char));
+                        (get_txtlen() + get_maxkeys()) * sizeof(char));
+        if (NULL == txt.display) {
+                log_err("realloc to null in `do_append`");
+        }
         sprint_txt(&txt.typed_fore, TXT_FORE);
         sprint_keybuf(&txt.typing);
 
@@ -92,13 +96,13 @@ void cycle(
                                 return;
                         } else if (SDL_EVENT_KEY_DOWN == e.type) {
                                 input = TRUE;
+                                press_time = curr_time;
 
                                 if (SDLK_ESCAPE == e.key.key) {
                                         return;
                                 } else if (!reg_keyb_input(e)) {
                                         return;
                                 }
-                                press_time = curr_time;
 
                                 // Only update txt.typed_aft on cursor motion.
                         }
@@ -128,7 +132,7 @@ void cycle(
                 sprintf(txt.display, "%s%s%s",
                         txt.typed_fore, txt.typing, txt.typed_aft);
 
-                log_msg("text '%s'", txt.display);
+                log_msg("to render: '%s'", txt.display);
 
                 clear_cache();
                 if (!font_rend_text(txt.display, 50, 50)) {

@@ -15,22 +15,12 @@ static struct {
         .sq_l           =       0
 };
 
-static int flush_keybuf(
-        void
-) {
-        keys.sq[keys.sq_l] = '\0';      // = 0
-        if (!append_txt(keys.sq)) {
-                log_err("Failed to append input.");
-                return FALSE;
-        }
-        keys.sq_l = keys.sq[0] = 0;     // = '\0'
-        return TRUE;
-}
-
 void init_keys(
         void
 ) {
         keys.sq = calloc(MAX_KEY_SQ_LN, sizeof(char));
+
+        log_msg("  Initialised key manager.");
 }
 
 void dest_keys(
@@ -39,6 +29,8 @@ void dest_keys(
         free(keys.sq);
         keys.sq = NULL;
         keys.sq_l = 0;
+
+        log_msg("  Ended key manager.");
 }
 
 int log_keyp(
@@ -55,6 +47,11 @@ int log_keyp(
                 ret = KEYP_APPEND;      // Don't exit yet though - ensure update.
         }
 
+        if (k >= SDL_SCANCODE_CAPSLOCK) {       // All non-printable here and beyond.
+                ret = KEYP_NOTHING;
+                goto exit;
+        }
+
         switch (k) {
         case SDL_SCANCODE_RETURN: 
                 keys.sq[keys.sq_l++] = '\n';
@@ -64,10 +61,15 @@ int log_keyp(
         case SDL_SCANCODE_LSHIFT:
                 ret = KEYP_NOTHING;
                 break;
+        case SDL_SCANCODE_BACKSPACE:
+                ret = KEYP_NOTHING;
+                break;
+        case SDL_SCANCODE_TAB:
+                ret = KEYP_NOTHING;
+                break;
         default:
                 keys.sq[keys.sq_l++] = SDL_GetKeyFromScancode(k, SDL_KMOD_SHIFT * shift_d, false);
-                        // Need to validate characters somehow. Add some kind
-                        // of 'keycode_to_charcode(code, shift_down)'
+                log_msg("Entered '%c' - %d.", keys.sq[keys.sq_l - 1]);
                 break;
         }
 
@@ -84,6 +86,7 @@ int get_maxkeys(
 void sprint_keybuf(
         char                  **s
 ) {
+        log_msg("Extracting key sequence: '%s' - %d", keys.sq, keys.sq_l);
         char *c = keys.sq;
         char *e = *s;
 
@@ -92,3 +95,16 @@ void sprint_keybuf(
         }
         *e = '\0';
 }
+
+int flush_keybuf(
+        void
+) {
+        keys.sq[keys.sq_l] = '\0';      // = 0
+        if (!append_txt(keys.sq)) {
+                log_err("Failed to append input.");
+                return FALSE;
+        }
+        keys.sq_l = keys.sq[0] = 0;     // = '\0'
+        return TRUE;
+}
+

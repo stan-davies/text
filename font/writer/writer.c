@@ -40,17 +40,22 @@ static struct {
         struct str      txt             ;
         struct str      curr_line       ;
         struct str      curr_word       ;
+
+        int             locked          ;
 } writer;
 
 void init_writer(
         char           *_txt            ,
         int             chars_per_line
 ) {
-        writer.txt = create_str(strlen(_txt));
+        writer.txt = create_str(strlen(_txt) + 1);
         strcpy(writer.txt.str, _txt);
+        writer.txt.str[writer.txt.len - 1] = '\0';
 
         writer.curr_line = create_str(chars_per_line + 1);
         writer.curr_word = create_str(chars_per_line + 1);
+
+        writer.locked = FALSE;
 }
 
 void dest_writer(
@@ -59,6 +64,8 @@ void dest_writer(
         free_str(&writer.txt);
         free_str(&writer.curr_word);
         free_str(&writer.curr_line);
+
+        writer.locked = TRUE;
 }
 
 static void clear_word(
@@ -66,6 +73,7 @@ static void clear_word(
 ) {
         writer.curr_word.edt = writer.curr_word.str;
         writer.curr_word.edt_len = 0;
+        memset(writer.curr_word.str, 0, writer.curr_word.len);
 }
 
 static void clear_line(
@@ -73,28 +81,47 @@ static void clear_line(
 ) {
         writer.curr_line.edt = writer.curr_line.str;
         writer.curr_line.edt_len = 0;
+        memset(writer.curr_line.str, 0, writer.curr_line.len);
+}
+
+static inline void adv_txthead( // Advance text read head.
+        int             m
+) {
+        writer.txt.edt++;
+        writer.txt.edt_len++;
+
+        // Does seem to happen?
+        if (writer.txt.edt_len > writer.txt.len) {
+                log_wrn("overadvanced in  %d by %d", m, writer.txt.edt_len - writer.txt.len);
+        }
 }
 
 int writer_getline(
         char          **ln
 ) {
+        if (writer.locked) {
+                return FALSE;
+        }
+
         int more_text = TRUE;
         int lbreak = FALSE;
         clear_line();
         log_msg("more to read");
+
         for (;;) {
                 clear_word();
                 for (;;) {
-                        log_msg("dealing with %d", *writer.txt.edt);
-                        if (writer.txt.edt - writer.txt.str > writer.txt.len) {
-                                log_err("gone beyond");
+                        if (writer.txt.edt < writer.txt.str || writer.txt.edt >= writer.txt.str + writer.txt.len) {
+                                log_err("text out of bounds");
                         }
+                        log_msg("dealing with '%c' - %d", *writer.txt.edt, *writer.txt.edt);
+                        // Sometimes in here with overadvanced text read head.
                         if (' ' == *writer.txt.edt) {
                                 log_msg("break space");
                                 break;
                         } else if ('\0' == *writer.txt.edt) {
                                 lbreak = TRUE;
-                                more_text = FALSE;
+                                writer.locked = more_text = FALSE;
                                 log_msg("break null");
                                 break;
                         } else if ('\n' == *writer.txt.edt) {
@@ -102,26 +129,40 @@ int writer_getline(
                                 log_msg("break linefeed");
                                 break;
                         } else if (writer.curr_word.edt_len == writer.curr_word.len - 1) {
-                                writer.txt.edt++;
+                                adv_txthead(1);
                                 log_msg("break capacity");
                                 goto flush;
                         }
-                        *writer.curr_word.edt++ = *writer.txt.edt++;
+                        *writer.curr_word.edt++ = *writer.txt.edt;
+                        adv_txthead(2);
                         writer.curr_word.edt_len++;
+                        if (writer.curr_word.edt < writer.curr_word.str || writer.curr_word.edt >= writer.curr_word.str + writer.curr_word.len) {
+                                log_err("curr word out of bounds");
+                        }
                 }
 
-                writer.txt.edt++;       // Move past control character.
+                adv_txthead(3);          // Move past control character.
                         // Could be allowing read beyond capacity?
+
+                if (0 == writer.curr_word.edt_len && !lbreak) {
+                        continue;
+                }
 
                         // If word doesn't fit on line.
                 if (writer.curr_line.edt_len + writer.curr_word.edt_len > writer.curr_line.len) {
                         writer.txt.edt_len -= writer.curr_word.edt_len;
 flush:
+                        if (writer.curr_line.edt < writer.curr_line.str || writer.curr_line.edt >= writer.curr_line.str + writer.curr_line.len) {
+                                log_err("curr line out of bounds");
+                        }
                         *--writer.curr_line.edt = '\0'; // Replaces end ' '.
                         strcpy(*ln, writer.curr_line.str);
                         return more_text;
                 }
 
+                if (writer.curr_word.edt < writer.curr_word.str || writer.curr_word.edt >= writer.curr_word.str + writer.curr_word.len) {
+                        log_err("curr word out of bounds");
+                }
                 *writer.curr_word.edt++ = ' ';
                 *writer.curr_word.edt = '\0';
                 strcpy(writer.curr_line.edt, writer.curr_word.str);

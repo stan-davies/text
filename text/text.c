@@ -79,6 +79,9 @@ static int resize_str(
                 end_offset = s->end - s->beg;
         }
         s->beg = realloc(s->beg, s->len * sizeof(char));
+        if (NULL == s->beg) {
+                log_err("realloc to null in `resize_str`");
+        }
         s->end = s->beg + end_offset;
 
         return s->len;
@@ -91,6 +94,8 @@ void init_txt_man(
 ) {
         txt.fore = create_str();
         txt.aft  = create_str();
+
+        log_msg("  Initialised text manager.");
 }
 
 void dest_txt_man(
@@ -98,6 +103,8 @@ void dest_txt_man(
 ) {
         dest_str(&txt.fore);
         dest_str(&txt.aft);
+
+        log_msg("  Ended text manager.");
 }
 
 void print_txt(
@@ -126,9 +133,13 @@ void sprint_txt(
         int len = 1 +                   // +1 for '\0'
                   txt.fore.len * (TXT_FORE == (bits & TXT_FORE_MASK)) +
                   txt.aft.len  * (TXT_AFT  == (bits & TXT_AFT_MASK ));
-        *s = realloc(*s, len * sizeof(char));
+        *s = realloc(*s, len * sizeof(char));   // Freed by caller.
+        if (NULL == *s) {
+                log_err("realloc to null in `sprint_txt`");
+        }
         char *e = *s;
         char *c;
+        log_msg("Copying up from '%s' and '%s'.", txt.fore.beg, txt.aft.beg);
         if (TXT_FORE == (bits & TXT_FORE_MASK)) {
                 c = txt.fore.beg;
                 while (c < txt.fore.end) {

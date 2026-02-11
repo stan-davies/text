@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
         init_txt_man();
         init_keys();
 
-        log_msg("Program started successfully.");
+        log_msg("Program started successfully.\n-----");
 
         append_txt("world");
         move_cursor(-5);
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
         cycle();
         end_cycle();
 
-        log_msg("Program quit, ending...");
+        log_msg("-----\nProgram quit, ending...");
 
         dest_keys();
         dest_txt_man();

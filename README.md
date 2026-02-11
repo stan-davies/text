@@ -35,6 +35,45 @@ corruption, and always after four frames of the fourth character.
 
 Caching now works a lot better but it still sometimes crashes spontaneously.
 
+Fixed up part of problem related to allow input of non-printable characters.
+Not got any further though.
+
+Getting super reproduceable error by typing 'this'. Then when it tries to make
+sense of rendering the whole word everything goes wrong.
+
+Does seem to be dependent on _which_ characters I type. Must be some problem
+with the data being read or keyboard input or something?
+
+Also on speed of typing...?
+
+I don't understand at all and also this was the same error I couldn't solve in
+my last project.
+
+It seems to occasionally be reading from `txt` beyond capacity. However, it
+does not instantaneously crash, and instead crashes at other times when stuff
+all seems fine.
+
+I changed `writer_getline` (what I thought was the culprit) to do literally
+nothing and just strcpy it's text straight to be printed, and the error
+persisted, so I am ruling that one out.
+
+I changed `log_keyp` to just add an 'a' and return `KEYP_INPUT` and found that
+there is now an infrequent segfault but never any heap corruption. So that is
+somehow causing that?
+
+Really getting to it though is that if I skip the rendering of new stuff, and
+go straight to rendering the cache, then the error _never_ crops up. Then
+again, if it is a problem with corrupted data, then this region is not
+necessarily the root of the issue, but merely the place where the issue
+surfaces.
+
+I have a sneaky feeling that I have fixed it. If so, then the problem was
+assuming that `strcpy` would also bring along a null terminator, or perhaps
+allocating for `strlen` and then the null terminator being dubiously copied to
+beyond the allocated space.
+
+
+---
 
 Research notes (i.e. stuff I want to remember but won't be implementing in any
 near future):

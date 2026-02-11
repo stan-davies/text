@@ -67,3 +67,25 @@ void log_err(
 
         fclose(f);
 }
+
+void log_wrn(
+        char           *fmt     ,
+        ...
+) {
+        FILE *f = fopen(LOGF_PATH, "a");
+        if (!f) {
+                printf("Error opening log file. How did it come to this?\n");
+                return;
+        }
+
+        va_list argptr;
+        va_start(argptr, fmt);
+
+        fprintf(f, "Warning: ");
+        vfprintf(f, fmt, argptr);
+        fprintf(f, "\n");
+
+        va_end(argptr);
+
+        fclose(f);
+}

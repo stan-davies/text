@@ -36,6 +36,8 @@ int init_rend(
 
         SDL_SetRenderTarget(rend.r, rend.cache.tex);
 
+        log_msg("  Initialised renderer.");
+
         return TRUE;
 }
         
@@ -48,6 +50,8 @@ void dest_rend(
 
         SDL_DestroyTexture(rend.cache.tex);
         rend.cache.tex = NULL;
+
+        log_msg("  Ended renderer.");
 }
 
 void clear_cache(
@@ -107,7 +111,7 @@ int rend_srf(
         int ret = rend_tex(tex, dst);
         
         if (ret) {
-                log_msg("texture drawn");
+                log_msg("texture drawn\n-----\n");
         }
 
         SDL_DestroyTexture(tex);

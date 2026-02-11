@@ -24,4 +24,12 @@ void log_err(
         ...
 );
 
+/*
+ * Logs the given warning message to the log file.
+ */
+void log_wrn(
+        char           *fmt     ,
+        ...
+);
+
 #endif
