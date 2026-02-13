@@ -46,15 +46,22 @@ int get_txtlen(
 /*
  * Appends given string to text in current cursor position.
  */
-int append_txt(
+int txt_append(
         char                   *s
+);
+
+/*
+ * Pops a character from the cursor position.
+ */
+int txt_pop(
+        void
 );
 
 /*
  * Moves the cursor through the currently held text. Positive for forwards (or
  * right), negative for backwards (or left).
  */
-int move_cursor(
+int txt_move_cursor(
         int                     offset
 );
 

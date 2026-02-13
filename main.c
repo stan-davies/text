@@ -30,12 +30,12 @@ int main(int argc, char **argv) {
 
         log_msg("Program started successfully.\n-----");
 
-        append_txt("world");
-        move_cursor(-5);
-        append_txt("hello ");
-        move_cursor(5);
-        append_txt("!");
-        move_cursor(-6);
+        txt_append("world");
+        txt_move_cursor(-5);
+        txt_append("hello ");
+        txt_move_cursor(5);
+        txt_append("!");
+        txt_move_cursor(-6);
 
         init_cycle();
         cycle();

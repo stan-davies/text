@@ -34,8 +34,9 @@ static struct str create_str(
 ) {
         char *base = calloc(1, sizeof(char));
         struct str s = {
-                .beg    = base  ,
-                .end    = base  ,
+                .beg    = base          ,
+//                .end    = base + 1      ,
+                .end    = base          ,
                 .len    = 1
         };
 
@@ -53,12 +54,18 @@ static void dest_str(
         s->beg = NULL;
 }
 
+/*
+ * Alters the length of the given string, altering each datum accordingly -
+ * note that the end pointer is placed at the same offset from the start, but
+ * in the new memory block.
+ * Returns success.
+ */
 static int resize_str(
         struct str             *s       ,
         int                     r
 ) {
         if (s->len + r < 0) {           // Not allowed.
-                return -1;
+                return FALSE;
         }
 
         s->len += r;
@@ -69,7 +76,7 @@ static int resize_str(
                         s->beg = s->end = NULL;
                 }                       // But was already empty.
 
-                return 0;
+                return TRUE;
         }
 
         size_t end_offset;
@@ -80,11 +87,12 @@ static int resize_str(
         }
         s->beg = realloc(s->beg, s->len * sizeof(char));
         if (NULL == s->beg) {
-                log_err("realloc to null in `resize_str`");
+                log_err("Failed to resize string.");
+                return FALSE;
         }
         s->end = s->beg + end_offset;
 
-        return s->len;
+        return TRUE;
 }
 
 /**     Function definitions                                            **/
@@ -160,15 +168,16 @@ int get_txtlen(
         return txt.fore.len + txt.aft.len - 2;  // Account for each '\0'.
 }
 
-int append_txt(
+int txt_append(
         char                   *s
 ) {
-        if (resize_str(&txt.fore, strlen(s)) <= 0) {
+        if (!resize_str(&txt.fore, strlen(s))) {
                 return FALSE;
         }
 
         char *c = s;
-                                // End has been moved after realloc.
+                // End has also been moved after realloc, but distance from
+                // beginning is preserved.
         char *new_e = txt.fore.end + strlen(s);
         while (txt.fore.end < new_e) {
                 *txt.fore.end++ = *c++;
@@ -178,7 +187,25 @@ int append_txt(
         return TRUE;
 }
 
-int move_cursor(
+int txt_pop(
+        void
+) {
+                // Don't want to shorten if string is "\0".
+        if (1 == txt.fore.len) {
+                log_msg("already empty");
+                return TRUE;
+        }
+
+        if (!resize_str(&txt.fore, -1)) {
+                return FALSE;
+        }
+        
+        *--txt.fore.end = '\0';
+
+        return TRUE;
+}
+
+int txt_move_cursor(
         int                     offset          // Needs to be signed.
 ) {
         struct str *src = NULL;
@@ -198,13 +225,17 @@ int move_cursor(
                 return TRUE;
         }
 
-        resize_str(dst, offset);
+        if (!resize_str(dst, offset)) {
+                return FALSE;
+        }
         char *new_e = src->end - offset;
         while (src->end > new_e) {
                 *dst->end++ = *--src->end;
         }
         *src->end = '\0';
-        resize_str(src, -offset);
+        if (!resize_str(src, -offset)) {
+                return FALSE;
+        }
 
         return TRUE;
 }

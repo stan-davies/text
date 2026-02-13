@@ -72,8 +72,14 @@ static int reg_keyb_input(
                 do_append();
                 break;
         case KEYP_INPUT:
-                could_append = TRUE;
-                sprint_keybuf(&txt.typing);
+                could_append = sprint_keybuf(&txt.typing) > 0;
+                break;
+        case KEYP_BACKSPACE:
+                if (!txt_pop()) {
+                        log_err("Failed to pop character.");
+                        return FALSE;
+                }
+                sprint_txt(&txt.typed_fore, TXT_FORE);
                 break;
         default:
                 log_err("Problem taking input.");

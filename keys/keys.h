@@ -17,10 +17,13 @@ void dest_keys(
         void
 );
 
+#define KEYP_ERROR             -1       // Something went wrong.
 #define KEYP_INPUT              0       // Ordinary text input.
 #define KEYP_APPEND             1       // Enter was hit, text was appended.
-#define KEYP_ERROR             -1       // Something went wrong.
-#define KEYP_NOTHING            2
+#define KEYP_NOTHING            2       // Some kind of special key that
+                                        // warrants no action.
+#define KEYP_BACKSPACE          3       // A character has been popped from
+                                        // behind the cursor.
 
 /*
  * Log a keypress of the given scancode. Returns one of above macros for the
@@ -39,9 +42,10 @@ int get_maxkeys(
 );
 
 /*
- * Prints the buffer of the key logger to the given string.
+ * Prints the buffer of the key logger to the given string. Returns number of
+ * characters written to string.
  */
-void sprint_keybuf(
+int sprint_keybuf(
         char                  **s
 );
 

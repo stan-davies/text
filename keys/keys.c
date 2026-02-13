@@ -62,7 +62,12 @@ int log_keyp(
                 ret = KEYP_NOTHING;
                 break;
         case SDL_SCANCODE_BACKSPACE:
-                ret = KEYP_NOTHING;
+                if (keys.sq_l > 0) {
+                        keys.sq_l--;
+                        ret = KEYP_INPUT;
+                } else {
+                        ret = KEYP_BACKSPACE;
+                }
                 break;
         case SDL_SCANCODE_TAB:
                 ret = KEYP_NOTHING;
@@ -82,7 +87,7 @@ int get_maxkeys(
         return MAX_KEY_SQ_LN;
 }
 
-void sprint_keybuf(
+int sprint_keybuf(
         char                  **s
 ) {
         char *c = keys.sq;
@@ -92,13 +97,15 @@ void sprint_keybuf(
                 *e++ = *c++;
         }
         *e = '\0';
+
+        return keys.sq_l;
 }
 
 int flush_keybuf(
         void
 ) {
         keys.sq[keys.sq_l] = '\0';      // = 0
-        if (!append_txt(keys.sq)) {
+        if (!txt_append(keys.sq)) {
                 log_err("Failed to append input.");
                 return FALSE;
         }

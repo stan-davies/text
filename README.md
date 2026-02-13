@@ -20,9 +20,6 @@ More specific points of what needs doing for now:
 - Draw text block as lines to a texture then store that texture. If no keyboard
   input since last frame, redraw the same texture.
 - Draw cursor as a rectangle or something.
-- Implement delete - maybe a clear currently editing to main text then pluck
-  characters off the end of there. Alternatively: remove from editing string
-  until empty, then pop from main text.
 
 Indeed, `strlen` returns a number which does _not_ include the null terminator
 in the count.
