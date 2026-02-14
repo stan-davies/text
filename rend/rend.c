@@ -34,8 +34,6 @@ int init_rend(
         rend.cache.tex = SDL_CreateTexture(rend.r, SDL_PIXELFORMAT_RGBA8888,
                 SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        SDL_SetRenderTarget(rend.r, rend.cache.tex);
-
         log_msg("  Initialised renderer.");
 
         return TRUE;
@@ -54,29 +52,34 @@ void dest_rend(
         log_msg("  Ended renderer.");
 }
 
-void clear_cache(
+void clear_frame(
         void
 ) {
         rendcl();
 }
 
+void flush_frame(
+        void
+) {
+        SDL_RenderPresent(rend.r);
+}
+
+void clear_cache(
+        void
+) {
+        SDL_SetRenderTarget(rend.r, rend.cache.tex);
+        rendcl();
+        SDL_SetRenderTarget(rend.r, NULL);
+}
+
 int rend_cache(
         void
 ) {
-        SDL_SetRenderTarget(rend.r, NULL);
-
-        rendcl();
-
         SDL_FRect dst = { 0, 0, rend.cache.tex->w, rend.cache.tex->h };
         if (!rend_tex(rend.cache.tex, dst)) {
                 log_err("Failed to render cached texture.");
                 return FALSE;
         }
-
-        SDL_RenderPresent(rend.r);
-
-        SDL_SetRenderTarget(rend.r, rend.cache.tex);
-
         return TRUE;
 }
 
@@ -94,7 +97,8 @@ int rend_tex(
 int rend_srf(
         SDL_Surface    *srf     ,
         int             x       ,
-        int             y
+        int             y       ,
+        int             to_c
 ) {
         if (!rend.I) {
                 return FALSE;
@@ -108,10 +112,31 @@ int rend_srf(
                 return FALSE;
         }
 
+        if (to_c) {
+                SDL_SetRenderTarget(rend.r, rend.cache.tex);
+        }
+
         int ret = rend_tex(tex, dst);
+
+        if (to_c) {
+                SDL_SetRenderTarget(rend.r, NULL);
+        }
 
         SDL_DestroyTexture(tex);
         tex = NULL;
 
         return ret;
+}
+
+int rend_rct(
+        SDL_FRect       rct     ,
+        SDL_Color       c
+) {
+        if (!rend.I) {
+                return FALSE;
+        }
+
+        SDL_SetRenderDrawColor(rend.r, c.r, c.g, c.b, c.a);
+        SDL_RenderFillRect(rend.r, &rct);
+        return TRUE;
 }

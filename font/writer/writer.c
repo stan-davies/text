@@ -92,7 +92,8 @@ static inline void adv_txthead(         // Advance text read head.
 }
 
 int writer_getline(
-        char          **ln
+        char          **ln      ,
+        int            *cursx
 ) {
         if (writer.locked) {
                 return FALSE;
@@ -105,7 +106,11 @@ int writer_getline(
         for (;;) {
                 clear_word();
                 for (;;) {
-                        if (' ' == *writer.txt.edt) {
+                        if ('|' == *writer.txt.edt) {
+                                *cursx = writer.curr_line.edt_len + writer.curr_word.edt_len - 1;
+                                adv_txthead();
+                                continue;
+                        } else if (' ' == *writer.txt.edt) {
                                 break;
                         } else if ('\0' == *writer.txt.edt) {
                                 lbreak = TRUE;
@@ -119,8 +124,8 @@ int writer_getline(
                                 goto flush;
                         }
                         *writer.curr_word.edt++ = *writer.txt.edt;
-                        adv_txthead();
                         writer.curr_word.edt_len++;
+                        adv_txthead();
                 }
 
                 adv_txthead();          // Move past control character.

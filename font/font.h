@@ -15,7 +15,9 @@ void dest_font(
         void
 );
 
-// int open_font(path)          - returns ID for
+float get_font_height(
+        void
+);
 
 /*
  * Renders the given text at the given coordinates, wrapping to page width.

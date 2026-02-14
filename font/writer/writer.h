@@ -11,7 +11,8 @@ void dest_writer(
 );
 
 int writer_getline(
-        char          **ln
+        char          **ln      ,
+        int            *cursx
 );
 
 #endif

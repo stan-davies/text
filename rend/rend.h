@@ -24,6 +24,14 @@ void clear_cache(
         void
 );
 
+void clear_frame(
+        void
+);
+
+void flush_frame(
+        void
+);
+
 /*
  * Renders cached texture to window.
  */
@@ -45,7 +53,13 @@ int rend_tex(
 int rend_srf(
         SDL_Surface    *srf     ,
         int             x       ,
-        int             y
+        int             y       ,
+        int             to_c            // Render to cache.
+);
+
+int rend_rct(
+        SDL_FRect       rct     ,
+        SDL_Color       c
 );
 
 #endif

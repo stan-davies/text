@@ -9,6 +9,7 @@
 #include "text/text.h"
 #include "font/font.h"
 #include "keys/keys.h"
+#include "cursor/cursor.h"
 
 static struct {
         char           *typed_fore      ;
@@ -134,7 +135,7 @@ void cycle(
                         goto cont;
                 }
 
-                sprintf(txt.display, "%s%s%s",
+                sprintf(txt.display, "%s%s|%s",
                         txt.typed_fore, txt.typing, txt.typed_aft);
 
                 clear_cache();
@@ -144,7 +145,10 @@ void cycle(
                 }
 
 cont:
-                rend_cache();    // Renders cache.
+                clear_frame();
+                rend_cache();
+                draw_cursor();
+                flush_frame();
                 input = FALSE;
         }
 }

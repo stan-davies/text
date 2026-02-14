@@ -7,6 +7,7 @@
 #include "util.h"
 #include "rend/rend.h"
 #include "writer/writer.h"
+#include "cursor/cursor.h"
 
 static struct {
         TTF_Font       *f       ;
@@ -30,7 +31,7 @@ static int write_line(
 
         int ret = TRUE;
         SDL_Surface *srf = TTF_RenderText_Blended(font.f, txt, 0, black);
-        if (!rend_srf(srf, x, y)) {
+        if (!rend_srf(srf, x, y, TRUE)) {
                 log_err("Failed to print a line... =/");
                 ret = FALSE;
         }
@@ -53,7 +54,10 @@ int init_font(
                 // quit TTF?
                 return FALSE;
         }
-        TTF_GetStringSize(font.f, "A", 1, &font.char_size.w, &font.char_size.h);
+        int single;
+        TTF_GetStringSize(font.f, "A", 1, &single, &font.char_size.h);
+        TTF_GetStringSize(font.f, "AA", 2, &font.char_size.w, NULL);
+        font.char_size.w -= single;
 
         return TRUE;
 }
@@ -64,6 +68,12 @@ void dest_font(
         TTF_CloseFont(font.f);
         font.f = NULL;
         TTF_Quit();
+}
+
+float get_font_height(
+        void
+) {
+        return font.char_size.h;
 }
 
 int font_rend_text(
@@ -78,12 +88,20 @@ int font_rend_text(
         int lines = 0;
         int more_lns = TRUE;
 
+        int cursx = -1;
+
         init_writer(txt, chars_per_line);
 
         for (;;) {
-                more_lns = writer_getline(&curr_line);
+                more_lns = writer_getline(&curr_line, &cursx);
                 if (0 == strlen(curr_line)) {
                         goto loop_end;
+                }
+
+                if (-1 != cursx) {
+                        cursor_place(x + (float)(cursx * font.char_size.w),
+                                     y + (float)(lines * font.char_size.h));
+                        cursx = -1;
                 }
 
                 if (!write_line(curr_line, x, y + (float)(lines) * font.char_size.h)) {
