@@ -17,6 +17,15 @@ static struct {
         } char_size             ;
 } font;
 
+static struct {
+        struct {
+                float   x       ;
+                float   y       ;
+        } pos;
+
+        int             detect  ;
+} click;
+
 static int write_line(
         char           *txt     ,
         float           x       ,
@@ -89,6 +98,9 @@ int font_rend_text(
         int more_lns = TRUE;
 
         int cursx = -1;
+        int clckx = -1;
+
+        float draw_y;
 
         init_writer(txt, chars_per_line);
 
@@ -98,16 +110,28 @@ int font_rend_text(
                         goto loop_end;
                 }
 
-                if (-1 != cursx) {
+                draw_y = y + (float)(lines * font.char_size.h);
+
+                if (cursx >= 0) {
                         cursor_place(x + (float)(cursx * font.char_size.w),
-                                     y + (float)(lines * font.char_size.h));
-                        cursx = -1;
+                                     draw_y);
+                        cursx *= -1;
                 }
 
-                if (!write_line(curr_line, x, y + (float)(lines) * font.char_size.h)) {
+                if (!write_line(curr_line, x, draw_y)) {
                         log_err("Failed to print line.");
                         ret = FALSE;
                         break;
+                }
+
+                if (click.detect
+                 && draw_y < click.pos.y
+                 && y + (float)((lines + 1) * font.char_size.h) > click.pos.y
+                 && x < click.pos.x
+                 && x + (float)(strlen(curr_line) * font.char_size.w) > click.pos.x) {
+                        clckx = click.pos.x / font.char_size.w;
+                        printf("on %d\n", clckx);
+                        click.detect = FALSE;
                 }
 
 loop_end:
@@ -123,4 +147,13 @@ loop_end:
         curr_line = NULL;
 
         return ret;
+}
+
+void font_inform_click(
+        float           x       ,
+        float           y
+) {
+        click.pos.x = x;
+        click.pos.y = y;
+        click.detect = TRUE;
 }

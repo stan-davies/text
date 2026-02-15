@@ -5,10 +5,10 @@
 
 #include "util.h"
 
-// String stuff.
 struct str {
         char           *str     ;       // Don't tamper with.
         size_t          len     ;       // Allocated size.
+
         char           *edt     ;       // Tamper with to heart's content.
         size_t          edt_len ;       // Size filled.
 };

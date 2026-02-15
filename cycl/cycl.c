@@ -112,18 +112,11 @@ void cycle(
                                 }
 
                                 // Only update txt.typed_aft on cursor motion.
+                        } else if (SDL_EVENT_MOUSE_BUTTON_DOWN == e.type) {
+                                SDL_MouseButtonEvent m = e.button;
+                                font_inform_click(m.x, m.y);
+                                input = TRUE;
                         }
-//                        else if (SDL_EVENT_MOUSE_BUTTON_DOWN == e.type) {
-//                                SDL_MouseButtonEvent m = e.button;
-//                                printf("%f %f\n", m.x, m.y);
-//                                // Then... work on better text rendering first.
-//                        }
-                        /*      Go and see if it is hovering over text (may
-                         *      want to first do better text rendering) and
-                         *      then find where exactly the mouse is hovering
-                         *      and thus move cursor... =o
-                         *
-                         */
                 }
 
                         // 2 second break since last input then append.
