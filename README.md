@@ -15,9 +15,6 @@ Some point throughout, tools such as creating grid, storing colours, ...
 
 
 More specific points of what needs doing for now:
-- Sort out cursor motion, i.e. provide a way for a mouse click to be detected
-  and linked to a specific part of string being displayed, then set the cursor
-  to precisely there.
 - Decide what to do when getting to the bottom of the page.
 
 Indeed, `strlen` returns a number which does _not_ include the null terminator

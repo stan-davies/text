@@ -44,7 +44,7 @@ void print_txt(
                 printf("%c", *c++);
         }
         printf("|");
-        c = txt.aft.end + txt.aft.len;
+        c = txt.aft.end;
         while (c > txt.aft.beg) {
                 printf("%c", *--c);
         }
@@ -140,7 +140,7 @@ int txt_move_cursor(
 
         offset = MIN(abs(offset), src->len - 1);    // -1 for null-terminator.
 
-        if (0 == offset) {                 // Needed?
+        if (0 == offset) {
                 return TRUE;
         }
 

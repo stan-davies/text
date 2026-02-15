@@ -8,6 +8,10 @@
 #include "rend/rend.h"
 #include "writer/writer.h"
 #include "cursor/cursor.h"
+#include "text/text.h"
+#include "keys/keys.h"
+
+#define SKIP_CLCK_POSITION      2
 
 static struct {
         TTF_Font       *f       ;
@@ -53,13 +57,13 @@ int init_font(
         void
 ) {
         if (!TTF_Init()) {
-                printf("Error initialising SDL-ttf.\n");
+                log_err("Error initialising SDL-ttf.\n");
                 return FALSE;
         }
 
         font.f = TTF_OpenFont("assets/font.ttf", 24);
         if (!font.f) {
-                printf("Error loading font.\n");
+                log_err("Error loading font.\n");
                 // quit TTF?
                 return FALSE;
         }
@@ -97,8 +101,9 @@ int font_rend_text(
         int lines = 0;
         int more_lns = TRUE;
 
-        int cursx = -1;
-        int clckx = -1;
+        int chr_count = 0;
+        int cursx =  0;         // Cursor index.
+        int clckx;              // Click index.
 
         float draw_y;
 
@@ -112,10 +117,10 @@ int font_rend_text(
 
                 draw_y = y + (float)(lines * font.char_size.h);
 
-                if (cursx >= 0) {
+                if (cursx > 0) {
                         cursor_place(x + (float)(cursx * font.char_size.w),
                                      draw_y);
-                        cursx *= -1;
+                        cursx = -cursx - chr_count;
                 }
 
                 if (!write_line(curr_line, x, draw_y)) {
@@ -124,14 +129,14 @@ int font_rend_text(
                         break;
                 }
 
-                if (click.detect
+                if (TRUE == click.detect        // Takes values 0, 1, 2.
                  && draw_y < click.pos.y
                  && y + (float)((lines + 1) * font.char_size.h) > click.pos.y
                  && x < click.pos.x
                  && x + (float)(strlen(curr_line) * font.char_size.w) > click.pos.x) {
-                        clckx = click.pos.x / font.char_size.w;
-                        printf("on %d\n", clckx);
-                        click.detect = FALSE;
+                        clckx = chr_count +
+                                (click.pos.x - x) / font.char_size.w + 1;
+                        click.detect = SKIP_CLCK_POSITION;
                 }
 
 loop_end:
@@ -139,7 +144,15 @@ loop_end:
                         break;
                 }
 
+                chr_count += strlen(curr_line);
                 lines++;
+        }
+
+        if (SKIP_CLCK_POSITION == click.detect) {
+                flush_keybuf();
+                txt_move_cursor(clckx + cursx);
+                click.detect = FALSE;
+                ret = CURSOR_MOVED;
         }
 
         dest_writer();

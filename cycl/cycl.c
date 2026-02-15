@@ -110,8 +110,6 @@ void cycle(
                                 } else if (!reg_keyb_input(e)) {
                                         return;
                                 }
-
-                                // Only update txt.typed_aft on cursor motion.
                         } else if (SDL_EVENT_MOUSE_BUTTON_DOWN == e.type) {
                                 SDL_MouseButtonEvent m = e.button;
                                 font_inform_click(m.x, m.y);
@@ -128,13 +126,22 @@ void cycle(
                         goto cont;
                 }
 
+draw:
                 sprintf(txt.display, "%s%s|%s",
                         txt.typed_fore, txt.typing, txt.typed_aft);
 
                 clear_cache();
-                if (!font_rend_text(txt.display, 50, 50)) {
+                switch (font_rend_text(txt.display, 50, 50)) {
+                case FALSE:
                         log_err("Error printing message.");
                         return;
+                case CURSOR_MOVED:
+                        sprint_txt(&txt.typed_fore, TXT_FORE);
+                        sprint_txt(&txt.typed_aft, TXT_AFT);
+                        sprint_keybuf(&txt.typing);
+                        goto draw;
+                default:
+                        break;
                 }
 
 cont:
