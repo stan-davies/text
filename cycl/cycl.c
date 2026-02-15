@@ -147,7 +147,7 @@ void cycle(
 cont:
                 clear_frame();
                 rend_cache();
-                draw_cursor();
+                draw_cursor(curr_time);
                 flush_frame();
                 input = FALSE;
         }
