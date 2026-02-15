@@ -123,12 +123,6 @@ int font_rend_text(
                         cursx = -cursx - chr_count;
                 }
 
-                if (!write_line(curr_line, x, draw_y)) {
-                        log_err("Failed to print line.");
-                        ret = FALSE;
-                        break;
-                }
-
                 if (TRUE == click.detect        // Takes values 0, 1, 2.
                  && draw_y < click.pos.y
                  && y + (float)((lines + 1) * font.char_size.h) > click.pos.y
@@ -137,6 +131,12 @@ int font_rend_text(
                         clckx = chr_count +
                                 (click.pos.x - x) / font.char_size.w + 1;
                         click.detect = SKIP_CLCK_POSITION;
+                }
+
+                if (!click.detect && !write_line(curr_line, x, draw_y)) {
+                        log_err("Failed to print line.");
+                        ret = FALSE;
+                        break;
                 }
 
 loop_end:

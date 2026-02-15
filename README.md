@@ -15,7 +15,9 @@ Some point throughout, tools such as creating grid, storing colours, ...
 
 
 More specific points of what needs doing for now:
+- Make sense of what is happening when trying to place cursor at start of line.
 - Decide what to do when getting to the bottom of the page.
+- Save text to a file.
 
 Indeed, `strlen` returns a number which does _not_ include the null terminator
 in the count.
