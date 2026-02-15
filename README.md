@@ -19,7 +19,6 @@ More specific points of what needs doing for now:
   input since last frame, redraw the same texture.
 - Draw cursor as a rectangle or something.
 - Sort out the slight bugginess of text wrapping.
-- Get the cursor placement just right.
 - Make the cursor flash.
 
 Indeed, `strlen` returns a number which does _not_ include the null terminator

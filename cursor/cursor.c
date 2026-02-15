@@ -8,8 +8,8 @@ static struct {
         float           x       ;
         float           y       ;
 } cursor = {
-        .x      =       0       ,
-        .y      =       1
+        .x      =       0.f     ,
+        .y      =       0.f
 };
 
 void cursor_place(

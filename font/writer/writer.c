@@ -107,7 +107,7 @@ int writer_getline(
                 clear_word();
                 for (;;) {
                         if ('|' == *writer.txt.edt) {
-                                *cursx = writer.curr_line.edt_len + writer.curr_word.edt_len - 1;
+                                *cursx = writer.curr_line.edt_len + writer.curr_word.edt_len;
                                 adv_txthead();
                                 continue;
                         } else if (' ' == *writer.txt.edt) {
