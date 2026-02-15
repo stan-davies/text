@@ -17,16 +17,20 @@ Some point throughout, tools such as creating grid, storing colours, ...
 More specific points of what needs doing for now:
 - Make sense of what is happening when trying to place cursor at start of line.
 - Decide what to do when getting to the bottom of the page.
-- Save text to a file.
-
-Indeed, `strlen` returns a number which does _not_ include the null terminator
-in the count.
-
+- Save text to a file - detect cmd+s then collapse all then copy down fresh.
+- Show save icon - a coloured square in the corner that is red when there are
+  unsaved changes and green the rest of the time. Use a system like the
+  flashing cursor where `input` is passed and then savedness is toggled
+  accordingly.
+- Allow file contents to be loaded - load into a string and then do a kind of
+  `backpend` to the text so that the whole lot goes into `aft` and so the
+  cursor begins at the start of the text (or not focussed?).
+- Add some kind of interface for choosing files.
+- Add ability to highlight words and set text effects.
 
 ---
 
-Research notes (i.e. stuff I want to remember but won't be implementing in any
-near future):
+Notes:
 
 The SDL wiki says that what I have done for text input (reinventing the wheel)
 is really very foolish because it won't support the input of every language
@@ -34,3 +38,6 @@ ever. I should have used SDL_StartTextInput. However, I don't have plans _that_
 grand, so I think letting it only support English for now is quite reasonable.
 Getting it to support the input of more special characters could be a nice
 idea, but I am not overly fussed.
+
+The function `strlen` returns a number which does _not_ include the null
+terminator in the count.
