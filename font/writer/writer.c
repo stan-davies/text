@@ -85,10 +85,10 @@ static void clear_line(
 }
 
 static inline void adv_txthead(         // Advance text read head.
-        void
+        int             step
 ) {
-        writer.txt.edt++;
-        writer.txt.edt_len++;
+        writer.txt.edt          += step;
+        writer.txt.edt_len      += step;
 }
 
 int writer_getline(
@@ -108,7 +108,7 @@ int writer_getline(
                 for (;;) {
                         if ('|' == *writer.txt.edt) {
                                 *cursx = writer.curr_line.edt_len + writer.curr_word.edt_len;
-                                adv_txthead();
+                                adv_txthead(1);
                                 continue;
                         } else if (' ' == *writer.txt.edt) {
                                 break;
@@ -120,15 +120,15 @@ int writer_getline(
                                 lbreak = TRUE;
                                 break;
                         } else if (writer.curr_word.edt_len == writer.curr_word.len - 1) {
-                                adv_txthead();
+                                adv_txthead(1);
                                 goto flush;
                         }
                         *writer.curr_word.edt++ = *writer.txt.edt;
                         writer.curr_word.edt_len++;
-                        adv_txthead();
+                        adv_txthead(1);
                 }
 
-                adv_txthead();          // Move past control character.
+                adv_txthead(1);          // Move past control character.
 
                 if (0 == writer.curr_word.edt_len && !lbreak) {
                         continue;
@@ -136,7 +136,8 @@ int writer_getline(
 
                         // If word doesn't fit on line.
                 if (writer.curr_line.edt_len + writer.curr_word.edt_len > writer.curr_line.len) {
-                        writer.txt.edt_len -= writer.curr_word.edt_len;
+                        adv_txthead(-writer.curr_word.edt_len - 2);
+                        more_text = TRUE;
 flush:
                         *--writer.curr_line.edt = '\0'; // Replaces end ' '.
                         strcpy(*ln, writer.curr_line.str);

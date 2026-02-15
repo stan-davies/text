@@ -82,7 +82,7 @@ int font_rend_text(
         float           y
 ) {
         int ret = TRUE;
-        int chars_per_line = 0.9f * SCREEN_WIDTH / (float)font.char_size.w;
+        int chars_per_line = 0.8f * SCREEN_WIDTH / (float)font.char_size.w;
 
         char *curr_line = calloc(chars_per_line + 1, sizeof(char));
         int lines = 0;

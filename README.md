@@ -15,8 +15,9 @@ Some point throughout, tools such as creating grid, storing colours, ...
 
 
 More specific points of what needs doing for now:
-- Work out cursor motion - going to connect it with rendering (see odecd book).
-- Sort out the slight bugginess of text wrapping.
+- Sort out cursor motion, i.e. provide a way for a mouse click to be detected
+  and linked to a specific part of string being displayed, then set the cursor
+  to precisely there.
 
 Indeed, `strlen` returns a number which does _not_ include the null terminator
 in the count.

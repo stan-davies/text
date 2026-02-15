@@ -31,7 +31,7 @@ int draw_cursor(
 
         if (time < 0) {
                 change = -time;
-                vis = TRUE,
+                vis = TRUE;
         } else if (time - change >= FLASH_INTERVAL) {
                 change = time;
                 vis = !vis;
