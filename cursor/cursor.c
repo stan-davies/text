@@ -23,13 +23,16 @@ void cursor_place(
 }
 
 int draw_cursor(
-        Uint64          time
+        Sint64          time
 ) {
         static SDL_Color col = { 32, 33, 247, 255 };
         static Uint64 change = 0;
         static int vis = TRUE;
 
-        if (time - change >= FLASH_INTERVAL) {
+        if (time < 0) {
+                change = -time;
+                vis = TRUE,
+        } else if (time - change >= FLASH_INTERVAL) {
                 change = time;
                 vis = !vis;
         }

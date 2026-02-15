@@ -9,7 +9,7 @@ void cursor_place(
 );
 
 int draw_cursor(
-        Uint64          time
+        Sint64          time
 );
 
 #endif
