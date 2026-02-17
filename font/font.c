@@ -89,6 +89,38 @@ float get_font_height(
         return font.char_size.h;
 }
 
+static int check_ln_click(
+        float           x               ,
+        float           y               ,
+        int             ln_len          ,
+        int             ln              ,
+        int             chr_count
+) {
+        if (click.pos.y < y
+         || click.pos.y > y + (float)((ln + 1) * font.char_size.h)) {
+                return -1;
+        }
+
+        if (0 == ln_len) {
+                printf("blank line\n");
+        }
+
+        if (click.pos.x < x) {
+                printf("off the left of line %d, setting %d\n", ln, chr_count);
+                // +1 if line is empty?
+                return chr_count;
+        }
+
+        if (click.pos.x < x + (float)(ln_len * font.char_size.w)) {
+                int tmp =  chr_count + (click.pos.x - x) / font.char_size.w;
+                printf("within line %d, setting %d\n", ln, tmp);
+                return tmp;
+        }
+
+        printf("off the right of line %d, setting %d\n", ln, chr_count + ln_len);
+        return chr_count + ln_len;
+}
+
 int font_rend_text(
         char           *txt     ,       // Must be null-terminated.
         float           x       ,
@@ -98,12 +130,12 @@ int font_rend_text(
         int chars_per_line = 0.8f * SCREEN_WIDTH / (float)font.char_size.w;
 
         char *curr_line = calloc(chars_per_line + 1, sizeof(char));
-        int lines = 0;
-        int more_lns = TRUE;
+        int lines       = 0;
+        int more_lns    = TRUE;
 
-        int chr_count = 0;
-        int cursx =  0;         // Cursor index.
-        int clckx;              // Click index.
+        int chr_count =  0;
+        int cursx     = -1;     // Cursor index.
+        int clckx     = -1;     // Click index.
 
         float draw_y;
 
@@ -111,35 +143,31 @@ int font_rend_text(
 
         for (;;) {
                 more_lns = writer_getline(&curr_line, &cursx);
-                if (0 == strlen(curr_line)) {
-                        goto loop_end;
-                }
-
                 draw_y = y + (float)(lines * font.char_size.h);
 
-                if (cursx > 0) {
+                printf("line %d - %d\n", lines + 1, strlen(curr_line));
+
+                if (cursx >= 0) {
                         cursor_place(x + (float)(cursx * font.char_size.w),
                                      draw_y);
-                        cursx = -cursx - chr_count;
+                        cursx += chr_count;
                 }
 
-                if (TRUE == click.detect        // Takes values 0, 1, 2.
-                 && draw_y < click.pos.y
-                 && y + (float)((lines + 1) * font.char_size.h) > click.pos.y
-                 && x < click.pos.x
-                 && x + (float)(strlen(curr_line) * font.char_size.w) > click.pos.x) {
-                        clckx = chr_count +
-                                (click.pos.x - x) / font.char_size.w + 1;
-                        click.detect = SKIP_CLCK_POSITION;
+                if (TRUE == click.detect) {     // Takes 1,2,3.
+                        clckx = check_ln_click(x, draw_y, strlen(curr_line),
+                                                        lines, chr_count);
+                        if (-1 != clckx) {
+                                click.detect = SKIP_CLCK_POSITION;
+                        }
                 }
 
-                if (!click.detect && !write_line(curr_line, x, draw_y)) {
+                if (strlen(curr_line) > 0 && !click.detect && !write_line(curr_line, x, draw_y)) {
                         log_err("Failed to print line.");
                         ret = FALSE;
+                        click.detect = FALSE;
                         break;
                 }
 
-loop_end:
                 if (!more_lns) {
                         break;
                 }
@@ -148,11 +176,17 @@ loop_end:
                 lines++;
         }
 
-        if (SKIP_CLCK_POSITION == click.detect) {
+        switch (click.detect) {
+        case SKIP_CLCK_POSITION:
                 flush_keybuf();
-                txt_move_cursor(clckx + cursx);
+                txt_move_cursor(clckx - cursx);
+                // No break.
+        case TRUE:
                 click.detect = FALSE;
-                ret = CURSOR_MOVED;
+                ret = CURSOR_REDRAW;
+                break;
+        default:
+                break;
         }
 
         dest_writer();

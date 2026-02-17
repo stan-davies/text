@@ -135,7 +135,7 @@ draw:
                 case FALSE:
                         log_err("Error printing message.");
                         return;
-                case CURSOR_MOVED:
+                case CURSOR_REDRAW:
                         sprint_txt(&txt.typed_fore, TXT_FORE);
                         sprint_txt(&txt.typed_aft, TXT_AFT);
                         sprint_keybuf(&txt.typing);

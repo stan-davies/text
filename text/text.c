@@ -136,6 +136,8 @@ int txt_move_cursor(
         } else if (offset > 0) {
                 src = &txt.aft;
                 dst = &txt.fore;
+        } else {
+                return TRUE;    // Offset of 0, do nothing.
         }
 
         offset = MIN(abs(offset), src->len - 1);    // -1 for null-terminator.

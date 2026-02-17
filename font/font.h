@@ -1,7 +1,7 @@
 #ifndef FONT_H
 #define FONT_H
 
-#define CURSOR_MOVED    2
+#define CURSOR_REDRAW   2
 
 /*
  * Intialises the font handler.

@@ -106,7 +106,7 @@ int writer_getline(
         for (;;) {
                 clear_word();
                 for (;;) {
-                        if ('|' == *writer.txt.edt) {
+                        if (-1 == *cursx && '|' == *writer.txt.edt) {
                                 *cursx = writer.curr_line.edt_len + writer.curr_word.edt_len;
                                 adv_txthead(1);
                                 continue;
@@ -117,6 +117,8 @@ int writer_getline(
                                 writer.locked = more_text = FALSE;
                                 break;
                         } else if ('\n' == *writer.txt.edt) {
+                                        // For trying to click.
+                                *writer.curr_word.edt++ = ' ';
                                 lbreak = TRUE;
                                 break;
                         } else if (writer.curr_word.edt_len == writer.curr_word.len - 1) {
@@ -139,7 +141,7 @@ int writer_getline(
                         adv_txthead(-writer.curr_word.edt_len - 2);
                         more_text = TRUE;
 flush:
-                        *--writer.curr_line.edt = '\0'; // Replaces end ' '.
+                        *--writer.curr_line.edt = '\0';
                         strcpy(*ln, writer.curr_line.str);
                         return more_text;
                 }
