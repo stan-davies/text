@@ -96,38 +96,32 @@ static int check_ln_click(
         int             ln              ,
         int             chr_count
 ) {
-        if (click.pos.y < y
-         || click.pos.y > y + (float)((ln + 1) * font.char_size.h)) {
+        if (click.pos.y < y) {
+                printf("too high for line %d\n", ln);
                 return -1;
+        } else if (click.pos.y > y + (float)font.char_size.h) {
+                printf("too low for line %d\n", ln);
+                return -1;
+        } else {
+                printf("in row of line %d\n", ln);
         }
 
-        if (0 == ln_len) {
-                printf("blank line\n");
+        if (click.pos.x < x) {
+                printf("off the left of line %d, setting %d\n", ln, chr_count);
+                // +1 if line is empty? Or -1?
+                return chr_count;
+        } else {
+                printf("in on left for line %d\n", ln);
         }
 
-//        if (click.pos.x < x) {
-//                printf("off the left of line %d, setting %d\n", ln, chr_count);
-//                // +1 if line is empty? Or -1?
-//                return chr_count;
-//        }
-//
-//        if (click.pos.x < x + (float)(ln_len * font.char_size.w)) {
-//                int tmp =  chr_count + (click.pos.x - x) / font.char_size.w;
-//                printf("within line %d, setting %d\n", ln, tmp);
-//                return tmp;
-//        }
-//
-//        printf("off the right of line %d, setting %d\n", ln, chr_count + ln_len);
-//        return chr_count + ln_len;
-
-        if (click.pos.x < x + (float)(ln_len * font.char_size.w)
-         && click.pos.x > x) {
+        if (click.pos.x < x + (float)(ln_len * font.char_size.w)) {
                 int tmp =  chr_count + (click.pos.x - x) / font.char_size.w;
                 printf("within line %d, setting %d\n", ln, tmp);
                 return tmp;
-        } else {
-                return -1;
         }
+
+        printf("off the right of line %d, setting %d\n", ln, chr_count + ln_len);
+        return chr_count + ln_len;
 }
 
 int font_rend_text(
@@ -150,13 +144,11 @@ int font_rend_text(
 
         init_writer(txt, chars_per_line);
 
-        printf("\n\n");
+        printf("\n");
 
         for (;;) {
                 more_lns = writer_getline(&curr_line, &cursx);
                 draw_y = y + (float)(lines * font.char_size.h);
-
-                printf("line %d - %d\n", lines + 1, strlen(curr_line));
 
                 if (cursx >= 0) {
                         cursor_place(x + (float)(cursx * font.char_size.w),
@@ -169,8 +161,6 @@ int font_rend_text(
                                                         lines, chr_count);
                         if (-1 != clckx) {
                                 click.detect = SKIP_CLCK_POSITION;
-                        } else {
-                                printf("not on line %d\n", lines);
                         }
                 }
 
