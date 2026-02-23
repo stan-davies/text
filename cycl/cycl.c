@@ -139,6 +139,8 @@ draw:
                         sprint_txt(&txt.typed_fore, TXT_FORE);
                         sprint_txt(&txt.typed_aft, TXT_AFT);
                         sprint_keybuf(&txt.typing);
+                        printf("new strings '%s' '%s' | '%s'\n",
+                                txt.typed_fore, txt.typing, txt.typed_aft);
                         goto draw;
                 default:
                         break;
