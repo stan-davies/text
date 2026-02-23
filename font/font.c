@@ -96,6 +96,8 @@ static int check_ln_click(
         int             ln              ,
         int             chr_count
 ) {
+        printf("\n");
+
         if (click.pos.y < y) {
                 printf("too high for line %d\n", ln);
                 return -1;
@@ -144,8 +146,6 @@ int font_rend_text(
 
         init_writer(txt, chars_per_line);
 
-        printf("\n");
-
         for (;;) {
                 more_lns = writer_getline(&curr_line, &cursx);
                 draw_y = y + (float)(lines * font.char_size.h);
@@ -176,7 +176,7 @@ int font_rend_text(
                         break;
                 }
 
-                chr_count += strlen(curr_line);
+                chr_count += strlen(curr_line) + 1; // +1 for '\n'
                 lines++;
         }
 
