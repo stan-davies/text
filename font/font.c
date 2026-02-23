@@ -93,36 +93,21 @@ static int check_ln_click(
         float           x               ,
         float           y               ,
         int             ln_len          ,
-        int             ln              ,
         int             chr_count
 ) {
-        printf("\n");
-
-        if (click.pos.y < y) {
-                printf("too high for line %d\n", ln);
+        if (click.pos.y < y
+         || click.pos.y > y + (float)font.char_size.h) {
                 return -1;
-        } else if (click.pos.y > y + (float)font.char_size.h) {
-                printf("too low for line %d\n", ln);
-                return -1;
-        } else {
-                printf("in row of line %d\n", ln);
         }
 
         if (click.pos.x < x) {
-                printf("off the left of line %d, setting %d\n", ln, chr_count);
-                // +1 if line is empty? Or -1?
                 return chr_count;
-        } else {
-                printf("in on left for line %d\n", ln);
         }
 
         if (click.pos.x < x + (float)(ln_len * font.char_size.w)) {
-                int tmp =  chr_count + (click.pos.x - x) / font.char_size.w;
-                printf("within line %d, setting %d\n", ln, tmp);
-                return tmp;
+                return chr_count + (click.pos.x - x) / font.char_size.w;
         }
 
-        printf("off the right of line %d, setting %d\n", ln, chr_count + ln_len);
         return chr_count + ln_len;
 }
 
@@ -157,8 +142,8 @@ int font_rend_text(
                 }
 
                 if (TRUE == click.detect) {     // Takes 0,1,2.
-                        clckx = check_ln_click(x, draw_y, strlen(curr_line),
-                                                        lines, chr_count);
+                        clckx = check_ln_click(x, draw_y,
+                                                strlen(curr_line), chr_count);
                         if (-1 != clckx) {
                                 click.detect = SKIP_CLCK_POSITION;
                         }
@@ -183,7 +168,6 @@ int font_rend_text(
         switch (click.detect) {
         case SKIP_CLCK_POSITION:        // Was a click and new position found.
                 flush_keybuf();
-                printf("Moving from %d to %d, so %d\n", -cursx, clckx, clckx + cursx);
                 txt_move_cursor(clckx + cursx);
                 // No break.
         case TRUE:                      // Was a click and no new position found(?).

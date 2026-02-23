@@ -31,11 +31,6 @@ More specific points of what needs doing for now:
 Work out what is up with typing along a line that ends in a newline (and why
 that causes heap corruption).
 
-Placing cursor sometimes just does not work. It will put it on the wrong line,
-or on the wrong place on a line, or some other rubbish. Problem is likely in
-the `check_ln_click` function. However, blank lines are somehow especially
-problematic. Whole thing seems so confused, probably start over a bit.
-
 ---
 
 Notes:
