@@ -130,6 +130,8 @@ int font_rend_text(
         float draw_y;
 
         init_writer(txt, chars_per_line);
+        
+        log_msg("\n");
 
         for (;;) {
                 more_lns = writer_getline(&curr_line, &cursx);

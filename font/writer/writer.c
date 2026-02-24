@@ -91,6 +91,28 @@ static inline void adv_txthead(         // Advance text read head.
         writer.txt.edt_len      += step;
 }
 
+static void print_to_write(
+        void
+) {
+        char *str = calloc(writer.txt.len - writer.txt.edt_len, sizeof(char));
+        int i = 0;
+        char *c = writer.txt.edt;
+        while (c < writer.txt.str + writer.txt.len) {
+                switch (*c) {
+                case '\n':
+                        str[i++] = '\\';
+                        break;
+                default:
+                        str[i++] = *c;
+                        break;
+                }
+                c++;
+        }
+        log_msg("'%s'", str);
+        free(str);
+        str = NULL;
+}
+
 int writer_getline(
         char          **ln      ,
         int            *cursx
@@ -103,11 +125,14 @@ int writer_getline(
         int lbreak = FALSE;
         clear_line();
 
+        print_to_write();
+
         for (;;) {
                 clear_word();
                 for (;;) {
                         if (-1 == *cursx && '|' == *writer.txt.edt) {
-                                *cursx = writer.curr_line.edt_len + writer.curr_word.edt_len;
+                                *cursx = writer.curr_line.edt_len
+                                                + writer.curr_word.edt_len;
                                 adv_txthead(1);
                                 continue;
                         } else if (' ' == *writer.txt.edt) {
@@ -117,11 +142,11 @@ int writer_getline(
                                 writer.locked = more_text = FALSE;
                                 break;
                         } else if ('\n' == *writer.txt.edt) {
-                                        // For trying to click.
-//                                *writer.curr_word.edt++ = ' ';
                                 lbreak = TRUE;
                                 break;
-                        } else if (writer.curr_word.edt_len == writer.curr_word.len - 1) {
+                        } else if (writer.curr_word.edt_len
+                                                == writer.curr_word.len - 1) {
+                                // Doesn't work.
                                 adv_txthead(1);
                                 goto flush;
                         }

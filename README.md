@@ -28,8 +28,8 @@ More specific points of what needs doing for now:
 - Add some kind of interface for choosing files.
 - Add ability to highlight words and set text effects.
 
-Work out what is up with typing along a line that ends in a newline (and why
-that causes heap corruption).
+Seems that the cursor motion and display largely works, though occasionally the
+'|' is displayed and there are other little inconveniences like that.
 
 ---
 
