@@ -118,7 +118,7 @@ int writer_getline(
                                 break;
                         } else if ('\n' == *writer.txt.edt) {
                                         // For trying to click.
-                                *writer.curr_word.edt++ = ' ';
+//                                *writer.curr_word.edt++ = ' ';
                                 lbreak = TRUE;
                                 break;
                         } else if (writer.curr_word.edt_len == writer.curr_word.len - 1) {
