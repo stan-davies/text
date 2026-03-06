@@ -91,26 +91,14 @@ static inline void adv_txthead(         // Advance text read head.
         writer.txt.edt_len      += step;
 }
 
-static void print_to_write(
+static void word_to_line(
         void
 ) {
-        char *str = calloc(writer.txt.len - writer.txt.edt_len, sizeof(char));
-        int i = 0;
-        char *c = writer.txt.edt;
-        while (c < writer.txt.str + writer.txt.len) {
-                switch (*c) {
-                case '\n':
-                        str[i++] = '\\';
-                        break;
-                default:
-                        str[i++] = *c;
-                        break;
-                }
-                c++;
-        }
-        log_msg("'%s'", str);
-        free(str);
-        str = NULL;
+        *writer.curr_word.edt++ = ' ';
+        *writer.curr_word.edt = '\0';
+        strcpy(writer.curr_line.edt, writer.curr_word.str);
+        writer.curr_line.edt += writer.curr_word.edt_len + 1;
+        writer.curr_line.edt_len += writer.curr_word.edt_len + 1;
 }
 
 int writer_getline(
@@ -124,8 +112,6 @@ int writer_getline(
         int more_text = TRUE;
         int lbreak = FALSE;
         clear_line();
-
-        print_to_write();
 
         for (;;) {
                 clear_word();
@@ -146,8 +132,8 @@ int writer_getline(
                                 break;
                         } else if (writer.curr_word.edt_len
                                                 == writer.curr_word.len - 1) {
-                                // Doesn't work.
-                                adv_txthead(1);
+                                word_to_line();
+                                writer.curr_line.edt++; // For \0.
                                 goto flush;
                         }
                         *writer.curr_word.edt++ = *writer.txt.edt;
@@ -165,18 +151,15 @@ int writer_getline(
                 if (writer.curr_line.edt_len + writer.curr_word.edt_len > writer.curr_line.len) {
                         adv_txthead(-writer.curr_word.edt_len - 2);
                         more_text = TRUE;
+                        *cursx = -1;    // If cursor was in that word, position
+                                        // isn't right.
 flush:
                         *--writer.curr_line.edt = '\0';
                         strcpy(*ln, writer.curr_line.str);
                         return more_text;
                 }
 
-                *writer.curr_word.edt++ = ' ';
-                *writer.curr_word.edt = '\0';
-                strcpy(writer.curr_line.edt, writer.curr_word.str);
-                writer.curr_line.edt += writer.curr_word.edt_len + 1;
-                writer.curr_line.edt_len += writer.curr_word.edt_len + 1;
-
+                word_to_line();
                 if (lbreak) {
                         goto flush;
                 }

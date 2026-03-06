@@ -140,7 +140,7 @@ int txt_move_cursor(
                 return TRUE;    // Offset of 0, do nothing.
         }
 
-        offset = MIN(abs(offset), src->len - 1);    // -1 for null-terminator.
+        offset = MIN(abs(offset), (int)(src->len - 1));    // -1 for null-terminator.
 
         if (0 == offset) {
                 return TRUE;

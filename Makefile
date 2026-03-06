@@ -6,8 +6,7 @@ FLG = `pkg-config --cflags --libs sdl3 sdl3-ttf`
 OUT = txt
 
 all : ${OBJ}
-	${CMD} $^ ${INC} ${FLG} -Wall -pedantic -Wextra -o ${OUT}
-
+	${CMD} $^ ${FLG} ${INC} -Wall -pedantic -Wextra -o ${OUT}
 ${OBJ} : %.o: %.c
 	${CMD} ${INC} ${FLG} -Wall -pedantic -Wextra -c $^ -o $@
 

@@ -16,6 +16,7 @@ Some point throughout, tools such as creating grid, storing colours, ...
 
 More specific points of what needs doing for now:
 * Sort out the cursor motion problems.
+- Change mind on not displaying multiple spaces.
 - Decide what to do when getting to the bottom of the page.
 - Save text to a file - detect cmd+s then collapse all then copy down fresh.
 - Show save icon - a coloured square in the corner that is red when there are
@@ -28,8 +29,9 @@ More specific points of what needs doing for now:
 - Add some kind of interface for choosing files.
 - Add ability to highlight words and set text effects.
 
-Seems that the cursor motion and display largely works, though occasionally the
-'|' is displayed and there are other little inconveniences like that.
+Filled line seemed to work but then I got it to crash when filling the second
+line. Crashed during rendering and I have not been able to reproduce this error
+so far.
 
 ---
 

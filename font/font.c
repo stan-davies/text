@@ -131,8 +131,6 @@ int font_rend_text(
 
         init_writer(txt, chars_per_line);
         
-        log_msg("\n");
-
         for (;;) {
                 more_lns = writer_getline(&curr_line, &cursx);
                 draw_y = y + (float)(lines * font.char_size.h);
