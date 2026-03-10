@@ -15,8 +15,7 @@ Some point throughout, tools such as creating grid, storing colours, ...
 
 
 More specific points of what needs doing for now:
-* Sort out the cursor motion problems.
-- Decide what to do when getting to the bottom of the page.
+* Decide what to do when getting to the bottom of the page.
 - Save text to a file - detect cmd+s then collapse all then copy down fresh.
 - Show save icon - a coloured square in the corner that is red when there are
   unsaved changes and green the rest of the time. Use a system like the
@@ -28,9 +27,6 @@ More specific points of what needs doing for now:
 - Add some kind of interface for choosing files.
 - Add ability to highlight words and set text effects.
 
-Filled line seemed to work but then I got it to crash when filling the second
-line. Crashed during rendering and I have not been able to reproduce this error
-so far.
 
 ---
 
@@ -51,3 +47,8 @@ the output word (but rather when word is pushed to line), so if there are
 multiple subsequent spaces then only the first is included and the rest are
 ignored. This will presumably be useful for justified lines but currently feels
 a bit odd.
+
+Had a crash one time when the second line was filled with a single word that
+wrapped to the next but then I couldn't reproduce this error ever so hopefully
+it's fine. The crash was during rendering, but that's just trickle down I
+imagine.

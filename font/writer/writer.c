@@ -152,7 +152,7 @@ int writer_getline(
                                  writer.curr_line.len) {
                         adv_txthead(-writer.curr_word.edt_len - 2);
                         more_text = TRUE;
-                        if (*cursx >= writer.curr_line.edt_len) {
+                        if (*cursx >= (int)writer.curr_line.edt_len) {
                                 *cursx = -1; // If cursor was in that word,
                                              // position isn't right.
                         }
