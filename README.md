@@ -16,7 +16,6 @@ Some point throughout, tools such as creating grid, storing colours, ...
 
 More specific points of what needs doing for now:
 * Sort out the cursor motion problems.
-- Change mind on not displaying multiple spaces.
 - Decide what to do when getting to the bottom of the page.
 - Save text to a file - detect cmd+s then collapse all then copy down fresh.
 - Show save icon - a coloured square in the corner that is red when there are
@@ -46,3 +45,9 @@ idea, but I am not overly fussed.
 
 The function `strlen` returns a number which does _not_ include the null
 terminator in the count.
+
+Currently when rendering the lines of text, spaces aren't moved directly into
+the output word (but rather when word is pushed to line), so if there are
+multiple subsequent spaces then only the first is included and the rest are
+ignored. This will presumably be useful for justified lines but currently feels
+a bit odd.

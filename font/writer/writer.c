@@ -148,11 +148,14 @@ int writer_getline(
                 }
 
                         // If word doesn't fit on line.
-                if (writer.curr_line.edt_len + writer.curr_word.edt_len > writer.curr_line.len) {
+                if (writer.curr_line.edt_len + writer.curr_word.edt_len >
+                                 writer.curr_line.len) {
                         adv_txthead(-writer.curr_word.edt_len - 2);
                         more_text = TRUE;
-                        *cursx = -1;    // If cursor was in that word, position
-                                        // isn't right.
+                        if (*cursx >= writer.curr_line.edt_len) {
+                                *cursx = -1; // If cursor was in that word,
+                                             // position isn't right.
+                        }
 flush:
                         *--writer.curr_line.edt = '\0';
                         strcpy(*ln, writer.curr_line.str);
