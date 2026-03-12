@@ -3,6 +3,9 @@
 
 #include "util.h"
 
+#define CACHE_WIDTH     0.8f * SCREEN_WIDTH
+#define CACHE_HEIGHT    0.8f * SCREEN_HEIGHT
+
 /*
  * Initialises the renderer.
  */
@@ -18,16 +21,40 @@ void dest_rend(
 );
 
 /*
+ * Converts cache space coordinates to screen space coordinates.
+ */
+void cstoss(
+        int            *x       ,
+        int            *y
+);
+
+/*
+ * Converts screen space coordinates to cache space coordinates, limiting to
+ * bounds.
+ */
+void sstocs(
+        float          *x       ,
+        float          *y
+);
+
+
+/*
  * Clears the cached texture so that it can be redrawn.
  */
 void clear_cache(
         void
 );
 
+/*
+ * Clears the render frame for redrawing.
+ */
 void clear_frame(
         void
 );
 
+/*
+ * Flushes the render frame to the screen.
+ */
 void flush_frame(
         void
 );
@@ -57,6 +84,9 @@ int rend_srf(
         int             to_c            // Render to cache.
 );
 
+/*
+ * Renders the given rectangle in the given colour.
+ */
 int rend_rct(
         SDL_FRect       rct     ,
         SDL_Color       c

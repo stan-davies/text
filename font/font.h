@@ -25,12 +25,11 @@ float get_font_height(
 );
 
 /*
- * Renders the given text at the given coordinates, wrapping to page width.
+ * Renders the given text to the cache, wrapping to page width and scrolling to
+ * accomodate the cursor and suchlike.
  */
 int font_rend_text(
-        char           *txt     ,       // Must be null-terminated.
-        float           x       ,
-        float           y
+        char           *txt             // Must be null-terminated.
 );
 
 /*

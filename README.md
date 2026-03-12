@@ -26,7 +26,8 @@ More specific points of what needs doing for now:
   cursor begins at the start of the text (or not focussed?).
 - Add some kind of interface for choosing files.
 - Add ability to highlight words and set text effects.
-
+- Really need a better system than '|' for setting the cursor position ---
+  might want to type that.
 
 ---
 
@@ -52,3 +53,7 @@ Had a crash one time when the second line was filled with a single word that
 wrapped to the next but then I couldn't reproduce this error ever so hopefully
 it's fine. The crash was during rendering, but that's just trickle down I
 imagine.
+
+Whole thing would be a lot better if the entire text got converted to some kind
+of 'W W\nW' symbol form of words and control characters, though how that would
+be interacted with I do not know.

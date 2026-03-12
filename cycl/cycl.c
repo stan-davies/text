@@ -131,7 +131,7 @@ draw:
                         txt.typed_fore, txt.typing, txt.typed_aft);
 
                 clear_cache();
-                switch (font_rend_text(txt.display, 50, 50)) {
+                switch (font_rend_text(txt.display)) {
                 case FALSE:
                         log_err("Error printing message.");
                         return;

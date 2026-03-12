@@ -9,8 +9,14 @@ static struct {
                 SDL_FRect       dst     ;
         } cache                         ;
 } rend = {
-        .I      =       FALSE   ,
-        .r      =       NULL
+        .I              =       FALSE   ,
+        .r              =       NULL    ,
+        .cache.dst      =       {
+                .x      =       (SCREEN_WIDTH - CACHE_WIDTH) / 2        ,
+                .y      =       (SCREEN_HEIGHT - CACHE_HEIGHT) / 2      ,
+                .w      =       CACHE_WIDTH                             ,
+                .h      =       CACHE_HEIGHT
+        }
 };
 
 static void rendcl(
@@ -32,7 +38,7 @@ int init_rend(
         }
         
         rend.cache.tex = SDL_CreateTexture(rend.r, SDL_PIXELFORMAT_RGBA8888,
-                SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+                SDL_TEXTUREACCESS_TARGET, CACHE_WIDTH, CACHE_HEIGHT);
 
         log_msg("  Initialised renderer.");
 
@@ -50,6 +56,32 @@ void dest_rend(
         rend.cache.tex = NULL;
 
         log_msg("  Ended renderer.");
+}
+
+void cstoss(
+        int            *x       ,
+        int            *y
+) {
+        *x += rend.cache.dst.x;
+        *y += rend.cache.dst.y;
+}
+
+void sstocs(
+        float          *x       ,
+        float          *y
+) {
+        *x -= rend.cache.dst.x;
+        if (*x < 0) {
+                *x = 0;
+        } else if (*x > rend.cache.dst.w) {
+                *x = rend.cache.dst.w;
+        }
+        *y -= rend.cache.dst.y;
+        if (*y < 0) {
+                *y = 0;
+        } else if (*y > rend.cache.dst.h) {
+                *y = rend.cache.dst.h;
+        }
 }
 
 void clear_frame(
@@ -75,8 +107,7 @@ void clear_cache(
 int rend_cache(
         void
 ) {
-        SDL_FRect dst = { 0, 0, rend.cache.tex->w, rend.cache.tex->h };
-        if (!rend_tex(rend.cache.tex, dst)) {
+        if (!rend_tex(rend.cache.tex, rend.cache.dst)) {
                 log_err("Failed to render cached texture.");
                 return FALSE;
         }

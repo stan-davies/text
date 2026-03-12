@@ -16,8 +16,8 @@
 static struct {
         TTF_Font       *f       ;
         struct {
-                int     w       ;
-                int     h       ;
+                int     w       ;       // Width of one character in px.
+                int     h       ;       // Height of one character in px.
         } char_size             ;
 } font;
 
@@ -38,7 +38,8 @@ static int write_line(
         const SDL_Color black = { 0, 0, 0, 255 };
 
         if (0 == strlen(txt)) {
-                log_err("Trying to write an empty line. This will cause a segmentation fault.");
+                log_err("Trying to write an empty line. This will cause a"
+                        "segmentation fault.");
                 return FALSE;
         }
 
@@ -111,46 +112,60 @@ static int check_ln_click(
         return chr_count + ln_len;
 }
 
+// Starting to hate how big this function is.
 int font_rend_text(
-        char           *txt     ,       // Must be null-terminated.
-        float           x       ,
-        float           y
+        char           *txt             // Must be null-terminated.
 ) {
+        static int scroll_pos = 0;
+        
         int ret = TRUE;
-        int chars_per_line = 0.8f * SCREEN_WIDTH / (float)font.char_size.w;
+
+        int chars_per_line = CACHE_WIDTH / (float)font.char_size.w;
+        int end_line = scroll_pos + CACHE_HEIGHT / (float)font.char_size.h;
 
         char *curr_line = calloc(chars_per_line + 1, sizeof(char));
         int lines       = 0;
         int more_lns    = TRUE;
 
         int chr_count =  0;
+                // Really okay for these to be -1?
         int cursx     = -1;     // Cursor index.
         int clckx     = -1;     // Click index.
 
-        float draw_y;
+        float draw_y;   // In cache space.
+
+        int x, y;
 
         init_writer(txt, chars_per_line);
         
         for (;;) {
                 more_lns = writer_getline(&curr_line, &cursx);
-                draw_y = y + (float)(lines * font.char_size.h);
+                draw_y = (float)((lines - scroll_pos) * font.char_size.h);
 
                 if (cursx >= 0) {
-                        cursor_place(x + (float)(cursx * font.char_size.w),
-                                     draw_y);
+                        // This could be a function (if cursx were global...)
+                        x = (float)(cursx * font.char_size.w);
+                        y = draw_y;
+                        cstoss(&x, &y);
+                        cursor_place(x, y);
                         cursx = -chr_count - cursx;
                 }
 
                 if (TRUE == click.detect) {     // Takes 0,1,2.
-                        clckx = check_ln_click(x, draw_y,
+                        // This could probably be a function...?
+                        clckx = check_ln_click(0, draw_y,
                                                 strlen(curr_line), chr_count);
                         if (-1 != clckx) {
                                 click.detect = SKIP_CLCK_POSITION;
                         }
                 }
 
-        // First two conditions are really on whether to run function.
-                if (strlen(curr_line) > 0 && !click.detect && !write_line(curr_line, x, draw_y)) {
+        // First few conditions are really on whether to run `write_line`.
+                if (strlen(curr_line) > 0
+                 && !click.detect
+                 && lines >= scroll_pos && lines <= end_line
+                 && !write_line(curr_line, 0, draw_y)) {
+                        // This could totally be a function.
                         log_err("Failed to print line.");
                         ret = FALSE;
                         click.detect = FALSE;
@@ -163,6 +178,17 @@ int font_rend_text(
 
                 chr_count += strlen(curr_line) + 1; // +1 for '\n'
                 lines++;
+
+                // I guess this stuff could be a function?
+                        // Cursor unplaced in visible region.
+                if (lines >= end_line && -1 == cursx) {
+                        ret = CURSOR_REDRAW;
+                        scroll_pos++;
+                } else if (lines == scroll_pos && cursx < -1) {
+                // This doesn't seem to work. Or actually does...?
+                        ret = CURSOR_REDRAW;
+                        scroll_pos--;
+                }
         }
 
         switch (click.detect) {
@@ -189,6 +215,7 @@ void font_inform_click(
         float           x       ,
         float           y
 ) {
+        sstocs(&x, &y);
         click.pos.x = x;
         click.pos.y = y;
         click.detect = TRUE;

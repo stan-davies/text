@@ -42,7 +42,9 @@ static struct {
         struct str      curr_word       ;
 
         int             locked          ;
-} writer;
+} writer = {
+        .locked         =       TRUE
+};
 
 void init_writer(
         char           *_txt            ,
@@ -55,7 +57,7 @@ void init_writer(
         writer.curr_line = create_str(chars_per_line + 1);
         writer.curr_word = create_str(chars_per_line + 1);
 
-        writer.locked = FALSE;
+        writer.locked  = FALSE;
 }
 
 void dest_writer(
