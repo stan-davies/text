@@ -15,7 +15,10 @@ Some point throughout, tools such as creating grid, storing colours, ...
 
 
 More specific points of what needs doing for now:
-* Decide what to do when getting to the bottom of the page.
+* Add scrolling with the arrow keys (or some such thing). Might be wise to
+  actually change to a smooth scrolling system which would presumably involve
+  using dstrct and srcrct in rendering the cache. Could then try for a scroll
+  bar.
 - Save text to a file - detect cmd+s then collapse all then copy down fresh.
 - Show save icon - a coloured square in the corner that is red when there are
   unsaved changes and green the rest of the time. Use a system like the

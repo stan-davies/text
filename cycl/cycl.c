@@ -10,6 +10,7 @@
 #include "font/font.h"
 #include "keys/keys.h"
 #include "cursor/cursor.h"
+#include "page/page.h"
 
 static struct {
         char           *typed_fore      ;
@@ -148,6 +149,7 @@ cont:
                 clear_frame();
                 rend_cache();
                 draw_cursor(curr_time * (input ? -1 : 1));
+                page_draw();
                 flush_frame();
                 input = FALSE;
         }

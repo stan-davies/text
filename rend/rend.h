@@ -71,7 +71,28 @@ int rend_cache(
  */
 int rend_tex(
         SDL_Texture    *tex     ,
-        SDL_FRect       dst
+        SDL_FRect      *src     ,
+        SDL_FRect      *dst
+);
+
+/*
+ * Renders `print` onto `canvas` using the source and destination rectangles.
+ */
+int rend_srf_to_tex(
+        SDL_Texture    *canvas  ,
+        SDL_Surface    *print   ,
+        SDL_FRect      *src     ,
+        SDL_FRect      *dst
+);
+
+/*
+ * Renders `print` onto `canvas` using the source and destination rectangles.
+ */
+int rend_tex_to_tex(
+        SDL_Texture    *canvas  ,
+        SDL_Texture    *print   ,
+        SDL_FRect      *src     ,
+        SDL_FRect      *dst
 );
 
 /*
@@ -90,6 +111,22 @@ int rend_srf(
 int rend_rct(
         SDL_FRect       rct     ,
         SDL_Color       c
+);
+
+/*
+ * Creates a texture with given conditions and returns it.
+ */
+SDL_Texture *rend_create_tex(
+        SDL_TextureAccess       access  ,
+        int             x       ,
+        int             y
+);
+
+/*
+ * Destroys the given texture.
+ */
+void rend_dest_tex(
+        SDL_Texture   **tex
 );
 
 #endif

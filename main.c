@@ -10,6 +10,7 @@
 #include "text/text.h"
 #include "cycl/cycl.h"
 #include "keys/keys.h"
+#include "page/page.h"
 
 int main(int argc, char **argv) {
         init_logw();
@@ -27,6 +28,7 @@ int main(int argc, char **argv) {
         }
         init_txt_man();
         init_keys();
+        init_page();
 
         log_msg("Program started successfully.\n-----");
 
@@ -37,12 +39,15 @@ int main(int argc, char **argv) {
         txt_append("!");
         txt_move_cursor(-6);
 
+        page_printline("Let us see.");
+
         init_cycle();
         cycle();
         end_cycle();
 
         log_msg("-----\nProgram quit, ending...");
 
+        dest_page();
         dest_keys();
         dest_txt_man();
         dest_rend();

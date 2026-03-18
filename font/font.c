@@ -35,8 +35,6 @@ static int write_line(
         float           x       ,
         float           y
 ) {
-        const SDL_Color black = { 0, 0, 0, 255 };
-
         if (0 == strlen(txt)) {
                 log_err("Trying to write an empty line. This will cause a"
                         "segmentation fault.");
@@ -44,7 +42,7 @@ static int write_line(
         }
 
         int ret = TRUE;
-        SDL_Surface *srf = TTF_RenderText_Blended(font.f, txt, 0, black);
+        SDL_Surface *srf = font_txt_to_srf(txt);
         if (!rend_srf(srf, x, y, TRUE)) {
                 log_err("Failed to print a line... =/");
                 ret = FALSE;
@@ -88,6 +86,13 @@ float get_font_height(
         void
 ) {
         return font.char_size.h;
+}
+
+SDL_Surface *font_txt_to_srf(
+        char           *txt
+) {
+        const SDL_Color black = { 0, 0, 0, 255 };
+        return TTF_RenderText_Blended(font.f, txt, 0, black);
 }
 
 static int check_ln_click(

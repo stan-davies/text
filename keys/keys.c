@@ -72,6 +72,12 @@ int log_keyp(
         case SDL_SCANCODE_TAB:
                 ret = KEYP_NOTHING;
                 break;
+        case SDL_SCANCODE_UP:
+                // scroll up
+                break;
+        case SDL_SCANCODE_DOWN:
+                // scroll down
+                break;
         default:
                 keys.sq[keys.sq_l++] = SDL_GetKeyFromScancode(k, SDL_KMOD_SHIFT * shift_d, false);
                 break;

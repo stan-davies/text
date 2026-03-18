@@ -107,7 +107,7 @@ void clear_cache(
 int rend_cache(
         void
 ) {
-        if (!rend_tex(rend.cache.tex, rend.cache.dst)) {
+        if (!rend_tex(rend.cache.tex, NULL, &rend.cache.dst)) {
                 log_err("Failed to render cached texture.");
                 return FALSE;
         }
@@ -116,13 +116,58 @@ int rend_cache(
 
 int rend_tex(
         SDL_Texture    *tex     ,
-        SDL_FRect       dst
+        SDL_FRect      *src     ,
+        SDL_FRect      *dst
 ) {
         if (!rend.I) {
                 return FALSE;
         }
 
-        return SDL_RenderTexture(rend.r, tex, NULL, &dst);
+        return SDL_RenderTexture(rend.r, tex, src, dst);
+}
+
+int rend_srf_to_tex(
+        SDL_Texture    *canvas  ,
+        SDL_Surface    *print   ,
+        SDL_FRect      *src     ,
+        SDL_FRect      *dst
+) {
+        if (!rend.I || NULL == print || NULL == canvas) {
+                return FALSE;
+        }
+
+        SDL_Texture *tex = SDL_CreateTextureFromSurface(rend.r, print);
+        if (NULL == tex) {
+                log_err("Could not create texture from surface.");
+                return FALSE;
+        }
+
+        SDL_SetRenderTarget(rend.r, canvas);
+        int ret = rend_tex(tex, src, dst);
+        SDL_SetRenderTarget(rend.r, NULL);
+
+        SDL_DestroyTexture(tex);
+        tex = NULL;
+        return ret;
+}
+
+int rend_tex_to_tex(
+        SDL_Texture    *canvas  ,
+        SDL_Texture    *print   ,
+        SDL_FRect      *src     ,
+        SDL_FRect      *dst
+) {
+        if (!rend.I || NULL == print || NULL == canvas) {
+                return FALSE;
+        }
+
+        SDL_SetRenderTarget(rend.r, canvas);
+
+        int ret = rend_tex(print, src, dst);
+
+        SDL_SetRenderTarget(rend.r, NULL);
+
+        return ret;
 }
 
 int rend_srf(
@@ -147,7 +192,7 @@ int rend_srf(
                 SDL_SetRenderTarget(rend.r, rend.cache.tex);
         }
 
-        int ret = rend_tex(tex, dst);
+        int ret = rend_tex(tex, NULL, &dst);
 
         if (to_c) {
                 SDL_SetRenderTarget(rend.r, NULL);
@@ -170,4 +215,21 @@ int rend_rct(
         SDL_SetRenderDrawColor(rend.r, c.r, c.g, c.b, c.a);
         SDL_RenderFillRect(rend.r, &rct);
         return TRUE;
+}
+
+SDL_Texture *rend_create_tex(
+        SDL_TextureAccess       access  ,
+        int             x       ,
+        int             y
+) {
+        SDL_Texture *t = SDL_CreateTexture(rend.r, SDL_PIXELFORMAT_RGBA8888,
+                                                                access, x, y);
+        return t;
+}
+
+void rend_dest_tex(
+        SDL_Texture   **tex
+) {
+        SDL_DestroyTexture(*tex);
+        *tex = NULL;
 }

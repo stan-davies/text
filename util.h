@@ -15,4 +15,9 @@
 #define SCREEN_WIDTH    800
 #define SCREEN_HEIGHT   600
 
+struct float2 {
+        float           x       ;
+        float           y       ;
+};
+
 #endif
