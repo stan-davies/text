@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "text/text.h"
+#include "page/page.h"
 
 #define MAX_KEY_SQ_LN           128
 
@@ -72,11 +73,11 @@ int log_keyp(
         case SDL_SCANCODE_TAB:
                 ret = KEYP_NOTHING;
                 break;
-        case SDL_SCANCODE_UP:
-                // scroll up
+        case SDL_SCANCODE_K:            // Up.
+                page_scroll(-10.f);
                 break;
-        case SDL_SCANCODE_DOWN:
-                // scroll down
+        case SDL_SCANCODE_J:            // Down.
+                page_scroll( 10.f);
                 break;
         default:
                 keys.sq[keys.sq_l++] = SDL_GetKeyFromScancode(k, SDL_KMOD_SHIFT * shift_d, false);

@@ -56,8 +56,8 @@ void dest_page(
 int page_draw(
         void
 ) {
-        SDL_FRect src = { 0, page.scroll, page.vis.x, page.vis.y };
-        SDL_FRect dst = { page.pos.x, page.pos.y, page.vis.x, page.vis.y };
+        SDL_FRect src = { 0, page.scroll, page.vis.x, page.vis.y - page.scroll };
+        SDL_FRect dst = { page.pos.x, page.pos.y, page.vis.x, page.vis.y - page.scroll };
         return rend_tex(page.cache, &src, &dst);
 }
 
@@ -75,8 +75,10 @@ int page_printline(
 
         SDL_Surface *s = font_txt_to_srf(line);
         SDL_FRect dst  = { 0, page.lines * s->h, s->w, s->h };
+                // ^ Within `page.cache`.
 
         int ret = rend_srf_to_tex(page.cache, s, NULL, &dst);
+        page.lines++;
 
         SDL_DestroySurface(s);
         s = NULL;
@@ -91,7 +93,11 @@ void page_scroll(
 
         if (page.scroll < 0.f) {
                 page.scroll = 0.f;
-        } else if (page.scroll > page.dim.y - page.vis.y) {
-                page.scroll = page.dim.y - page.vis.y;
+        } else if (page.scroll > page.lines * 20.f) {
+                page.scroll = page.lines * 20.f;
         }
+
+        // Alternative, original upper limit that might come in handy (?).
+//        } else if (page.scroll > page.dim.y - page.vis.y) {
+//                page.scroll = page.dim.y - page.vis.y;
 }

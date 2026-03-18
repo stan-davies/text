@@ -40,6 +40,8 @@ int main(int argc, char **argv) {
         txt_move_cursor(-6);
 
         page_printline("Let us see.");
+        page_printline("Looking");
+        page_printline("good.");
 
         init_cycle();
         cycle();
