@@ -54,6 +54,12 @@ void dest_page(
         log_msg("  Ended page manager.");
 }
 
+float page_get_scroll(
+        void
+) {
+        return page.scroll;
+}
+
 int page_draw(
         void
 ) {
@@ -102,12 +108,16 @@ int page_printline(
 void page_scroll(
         float           by
 ) {
-        page.scroll += by;
+        float lh = get_font_height();
 
+        page.scroll += by;
         if (page.scroll < 0.f) {
                 page.scroll = 0.f;
-        } else if (page.scroll > page.lines * 20.f) {
-                page.scroll = page.lines * 20.f;
+// Really want to base this specifically on the line height of the final line.
+// Fine if uniform font size, but otherwise we want some elaborate way of
+// knowing stuff about each line.
+        } else if (page.scroll > (page.lines - 1) * lh) {
+                page.scroll = (page.lines - 1) * lh;
         }
 
         // Alternative, original upper limit that might come in handy (?).

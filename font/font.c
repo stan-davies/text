@@ -122,12 +122,9 @@ static int check_ln_click(
 int font_rend_text(
         char           *txt             // Must be null-terminated.
 ) {
-        static int scroll_pos = 0;
-        
         int ret = TRUE;
 
         int chars_per_line = CACHE_WIDTH / (float)font.char_size.w;
-        int end_line = scroll_pos + CACHE_HEIGHT / (float)font.char_size.h;
 
         char *curr_line = calloc(chars_per_line + 1, sizeof(char));
         int lines       = 0;
@@ -138,23 +135,13 @@ int font_rend_text(
         int cursx     = -1;     // Cursor index.
         int clckx     = -1;     // Click index.
 
-        float draw_y;   // In cache space.
-
-        int x, y;
-
         page_clear();
         init_writer(txt, chars_per_line);
         
         for (;;) {
                 more_lns = writer_getline(&curr_line, &cursx);
-                draw_y = (float)((lines - scroll_pos) * font.char_size.h);
 
                 if (cursx >= 0) {
-                        // This could be a function (if cursx were global...)
-//                        x = (float)(cursx * font.char_size.w);
-//                        y = draw_y;
-//                        cstoss(&x, &y);
-//                        cursor_place(x, y);
                         page_place_cursor(
                                 cursx * font.char_size.w,
                                 lines * font.char_size.h
@@ -163,9 +150,9 @@ int font_rend_text(
                 }
 
                 if (TRUE == click.detect) {     // Takes 0,1,2.
-                        // This could probably be a function...?
-                        clckx = check_ln_click(0, draw_y,
-                                                strlen(curr_line), chr_count);
+                        clckx = check_ln_click(0,
+                              (float)(lines * font.char_size.h) - page_get_scroll(),
+                              strlen(curr_line), chr_count);
                         if (-1 != clckx) {
                                 click.detect = SKIP_CLCK_POSITION;
                         }
@@ -186,17 +173,6 @@ int font_rend_text(
 
                 chr_count += strlen(curr_line) + 1; // +1 for '\n'
                 lines++;
-
-                // I guess this stuff could be a function?
-                        // Cursor unplaced in visible region.
-                if (lines >= end_line && -1 == cursx) {
-                        ret = CURSOR_REDRAW;
-                        scroll_pos++;
-                } else if (lines == scroll_pos && cursx < -1) {
-                // This doesn't seem to work. Or actually does...?
-                        ret = CURSOR_REDRAW;
-                        scroll_pos--;
-                }
         }
 
         switch (click.detect) {

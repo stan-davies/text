@@ -32,6 +32,10 @@ More specific points of what needs doing for now:
 For `page`, I want to render lines to it, and then do some magic or something.
 No idea what the plan is really.
 
+I do, however, want it to essentially take most of what `font` does away from
+`font`. That should just handle the loading of fonts themselves, and nothing
+more.
+
 ---
 
 Notes:

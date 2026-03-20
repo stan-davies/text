@@ -16,6 +16,13 @@ void dest_page(
 );
 
 /*
+ * Returns current scroll distance.
+ */
+float page_get_scroll(
+        void
+);
+
+/*
  * Draws the page to the current frame.
  */
 int page_draw(
@@ -37,7 +44,8 @@ int page_printline(
 );
 
 /*
- * Scrolls the page content up and down.
+ * Scrolls the page content up and down, limiting to final line of given
+ * height.
  */
 void page_scroll(
         float           by
