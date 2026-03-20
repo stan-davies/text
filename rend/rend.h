@@ -53,6 +53,13 @@ void clear_frame(
 );
 
 /*
+ * Clears the given texture.
+ */
+void clear_tex(
+        SDL_Texture    *tex
+);
+
+/*
  * Flushes the render frame to the screen.
  */
 void flush_frame(

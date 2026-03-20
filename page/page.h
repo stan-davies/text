@@ -23,6 +23,13 @@ int page_draw(
 );
 
 /*
+ * Empties the page so that it can be redrawn.
+ */
+void page_clear(
+        void
+);
+
+/*
  * Appends the given line of text to the end of page.
  */
 int page_printline(
@@ -34,6 +41,12 @@ int page_printline(
  */
 void page_scroll(
         float           by
+);
+
+void page_place_cursor(
+        int             cx      ,       // x-pos of character to place at.
+        int             cy              // y-pos of character to place at.
+                                // Both are scaled to character size (so px).
 );
 
 #endif

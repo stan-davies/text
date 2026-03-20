@@ -99,7 +99,16 @@ void flush_frame(
 void clear_cache(
         void
 ) {
-        SDL_SetRenderTarget(rend.r, rend.cache.tex);
+        clear_tex(rend.cache.tex);
+}
+
+void clear_tex(
+        SDL_Texture    *tex
+) {
+        if (NULL == tex) {
+                return;
+        }
+        SDL_SetRenderTarget(rend.r, tex);
         rendcl();
         SDL_SetRenderTarget(rend.r, NULL);
 }

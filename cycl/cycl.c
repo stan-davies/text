@@ -148,8 +148,8 @@ draw:
 cont:
                 clear_frame();
                 rend_cache();
-                draw_cursor(curr_time * (input ? -1 : 1));
                 page_draw();
+                draw_cursor(curr_time * (input ? -1 : 1));
                 flush_frame();
                 input = FALSE;
         }

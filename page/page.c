@@ -5,6 +5,7 @@
 #include "util.h"
 #include "rend/rend.h"
 #include "font/font.h"
+#include "cursor/cursor.h"
 
 // Going for the really tall texture approach, may still need resizing.
 
@@ -19,8 +20,8 @@ static struct {
         float           scroll  ;
 } page  = {
         .pos    = {
-                .x      =       0.2f * SCREEN_WIDTH     ,
-                .y      =       0.2f * SCREEN_HEIGHT
+                .x      =       0.1f * SCREEN_WIDTH     ,
+                .y      =       0.1f * SCREEN_HEIGHT
         }       ,
         .dim    = {
                 .x      =       0.8f * SCREEN_WIDTH     ,
@@ -61,6 +62,13 @@ int page_draw(
         return rend_tex(page.cache, &src, &dst);
 }
 
+void page_clear(
+        void
+) {
+        page.lines = 0;
+        clear_tex(page.cache);
+}
+
 int page_printline(
         char           *line
 ) {
@@ -72,6 +80,11 @@ int page_printline(
          *   a kind of separating words into symbols. This is sounding like a
          *   really major rework.
          */
+
+        if (0 == strlen(line)) {
+                page.lines++;
+                return TRUE;
+        }
 
         SDL_Surface *s = font_txt_to_srf(line);
         SDL_FRect dst  = { 0, page.lines * s->h, s->w, s->h };
@@ -100,4 +113,14 @@ void page_scroll(
         // Alternative, original upper limit that might come in handy (?).
 //        } else if (page.scroll > page.dim.y - page.vis.y) {
 //                page.scroll = page.dim.y - page.vis.y;
+}
+
+void page_place_cursor(
+        int             cx      ,
+        int             cy
+) {
+        float x = page.pos.x + (float)cx;
+        float y = page.pos.y + (float)cy - page.scroll;
+
+        cursor_place(x, y);
 }

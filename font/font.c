@@ -10,6 +10,7 @@
 #include "cursor/cursor.h"
 #include "text/text.h"
 #include "keys/keys.h"
+#include "page/page.h"
 
 #define SKIP_CLCK_POSITION      2
 
@@ -141,6 +142,7 @@ int font_rend_text(
 
         int x, y;
 
+        page_clear();
         init_writer(txt, chars_per_line);
         
         for (;;) {
@@ -149,10 +151,14 @@ int font_rend_text(
 
                 if (cursx >= 0) {
                         // This could be a function (if cursx were global...)
-                        x = (float)(cursx * font.char_size.w);
-                        y = draw_y;
-                        cstoss(&x, &y);
-                        cursor_place(x, y);
+//                        x = (float)(cursx * font.char_size.w);
+//                        y = draw_y;
+//                        cstoss(&x, &y);
+//                        cursor_place(x, y);
+                        page_place_cursor(
+                                cursx * font.char_size.w,
+                                lines * font.char_size.h
+                        );
                         cursx = -chr_count - cursx;
                 }
 
@@ -165,11 +171,8 @@ int font_rend_text(
                         }
                 }
 
-        // First few conditions are really on whether to run `write_line`.
-                if (strlen(curr_line) > 0
-                 && !click.detect
-                 && lines >= scroll_pos && lines <= end_line
-                 && !write_line(curr_line, 0, draw_y)) {
+        // First condition is really on whether to run `page_printline`.
+                if (!click.detect && !page_printline(curr_line)) {
                         // This could totally be a function.
                         log_err("Failed to print line.");
                         ret = FALSE;
