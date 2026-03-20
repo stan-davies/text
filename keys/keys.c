@@ -48,7 +48,11 @@ int log_keyp(
                 ret = KEYP_APPEND;      // Don't exit yet though - ensure update.
         }
 
-        if (k >= SDL_SCANCODE_CAPSLOCK) {       // All non-printable here and beyond.
+        if (SDL_SCANCODE_RIGHT == k || SDL_SCANCODE_LEFT == k) {
+                page_scroll(20.f * (k - 79.5f));
+        }
+
+        if (k >= SDL_SCANCODE_CAPSLOCK) {// All non-printable here and beyond.
                 ret = KEYP_NOTHING;
                 goto exit;
         }
@@ -72,12 +76,6 @@ int log_keyp(
                 break;
         case SDL_SCANCODE_TAB:
                 ret = KEYP_NOTHING;
-                break;
-        case SDL_SCANCODE_K:            // Up.
-                page_scroll(-10.f);
-                break;
-        case SDL_SCANCODE_J:            // Down.
-                page_scroll( 10.f);
                 break;
         default:
                 keys.sq[keys.sq_l++] = SDL_GetKeyFromScancode(k, SDL_KMOD_SHIFT * shift_d, false);

@@ -15,10 +15,7 @@ Some point throughout, tools such as creating grid, storing colours, ...
 
 
 More specific points of what needs doing for now:
-* Add scrolling with the arrow keys (or some such thing). Might be wise to
-  actually change to a smooth scrolling system which would presumably involve
-  using dstrct and srcrct in rendering the cache. Could then try for a scroll
-  bar.
+* Complete `page`.
 - Save text to a file - detect cmd+s then collapse all then copy down fresh.
 - Show save icon - a coloured square in the corner that is red when there are
   unsaved changes and green the rest of the time. Use a system like the
@@ -31,6 +28,9 @@ More specific points of what needs doing for now:
 - Add ability to highlight words and set text effects.
 - Really need a better system than '|' for setting the cursor position ---
   might want to type that.
+
+For `page`, I want to render lines to it, and then do some magic or something.
+No idea what the plan is really.
 
 ---
 
